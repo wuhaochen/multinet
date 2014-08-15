@@ -162,13 +162,16 @@ def correlation_either(g1,g2):
     correlation = cov_sum/pow((g1_weight_dev_sum*g2_weight_dev_sum),0.5)
     return correlation
 
-def main(argv):
-    airfile_name = argv[1]
-
+#@param:
+#  filter_func should be a function that:
+#    1.Accept an index dictionary and a vector of one csv line as its parameter.
+#    2.Return True when the record should be included in the graph.
+#  weight_s should be a string that specifies the weight.
+def build_airgraph(file_name,filter_func,weight_s):
     index_dict = {}
-#    airnet = igraph.Graph(directed=True)
+    airnet = igraph.Graph(directed=True)
 
-    with open(airfile_name) as airfile:
+    with open(file_name) as airfile:
         airreader = csv.reader(airfile,delimiter=',',quotechar='\"')
         index_line = airreader.next()
 
@@ -179,14 +182,10 @@ def main(argv):
 
         origin = index_dict['ORIGIN']
         dest = index_dict['DEST']
-        dp = index_dict['DEPARTURES_PERFORMED']
-        passenger = index_dict['PASSENGERS']
-        carrier = index_dict['CARRIER']
-        config = index_dict['AIRCRAFT_CONFIG']
-        rank = index_dict['CLASS']
+        w = index_dict[weight_s]
 
         for line in airreader:
-            if line[config] != '1' or line[rank] != 'F':
+            if not filter_func(index_dict,line):
                 continue
             try:
                 airnet.vs.find(line[origin])
@@ -205,10 +204,39 @@ def main(argv):
                 airnet.add_edge(source,target,weight=0)
             
             eid = airnet.get_eid(source.index,target.index)
-            airnet.es[eid]['weight'] += float(line[dp])
+            airnet.es[eid]['weight'] += float(line[w])
 
-        airnet.vs["label"] = airnet.vs["name"]
-        igraph.plot(airnet)
+    return airnet
+
+def build_filter(**condition):
+    def filter_func(index_dict,line):
+        for key in condition:
+            index = index_dict[key]
+            if line[index] != condition[key]:
+                return False
+        return True
+    return filter_func
+
+def build_anti_filter(**condition):
+    def filter_func(index_dict,line):
+        for key in condition:
+            index = index_dict[key]
+            if line[index] == condition[key]:
+                return False
+        return True
+    return filter_func
+
+def main(argv):
+    airfile_name = argv[1]
+    filter1 = build_filter(CARRIER='WN')
+    filter2 = build_anti_filter(CARRIER='WN')
+
+    g1 = build_airgraph(airfile_name,filter1,'PASSENGERS')
+    g2 = build_airgraph(airfile_name,filter2,'PASSENGERS')
+
+    print correlation_pairs(g1,g2)
+    print correlation_common(g1,g2)
+    print correlation_either(g1,g2)
         
 if __name__ == "__main__":
     main(sys.argv)
