@@ -5,6 +5,9 @@ import sys
 import csv
 
 airnet = igraph.Graph(directed=True)
+cor1 = []
+cor2 = []
+cor3 = []
 
 def has_vertex(graph,vertex_name):
     try:
@@ -184,8 +187,8 @@ def correlation_either(g1,g2):
 #  filter_func should be a function that:
 #    1.Accept an index dictionary and a vector of one csv line as its parameter.
 #    2.Return True when the record should be included in the graph.
-#  weight_s should be a string that specifies the weight.
-def build_airgraph(file_name,filter_func,weight_s,multi_layer=False,layer_s=''):
+#  weight_func should be a function similiar to filter_func and return the weight.
+def build_airgraph(file_name,filter_func,weight_func,multi_layer=False,layer_s=''):
     index_dict = {}
     airnet = igraph.Graph(directed=True)
 
@@ -200,7 +203,6 @@ def build_airgraph(file_name,filter_func,weight_s,multi_layer=False,layer_s=''):
 
         origin = index_dict['ORIGIN']
         dest = index_dict['DEST']
-        w = index_dict[weight_s]
 
         for line in airreader:
             if not filter_func(index_dict,line):
@@ -229,9 +231,9 @@ def build_airgraph(file_name,filter_func,weight_s,multi_layer=False,layer_s=''):
                 l = index_dict[layer_s]
                 if not airnet.es[eid]['weight'].has_key(line[l]):
                     airnet.es[eid]['weight'][line[l]] = 0
-                airnet.es[eid]['weight'][line[l]] += float(line[w])
+                airnet.es[eid]['weight'][line[l]] += weight_func(index_dict,line)
             else:
-                airnet.es[eid]['weight'] += float(line[w])
+                airnet.es[eid]['weight'] += weight_func(index_dict,line)
 
     return airnet
 
@@ -253,17 +255,54 @@ def build_anti_filter(**condition):
         return True
     return filter_func
 
+def weight_from_string(weight_s):
+    def weight_func(index_dict,line):
+        w = index_dict[weight_s]
+        return float(line[w])
+    return weight_func
+
+def weight_from_ratio(ref_g,weight_s):
+    def weight_func(index_dict,line):
+        w = index_dict[weight_s]
+        origin = index_dict['ORIGIN']
+        dest = index_dict['DEST']
+        source = ref_g.vs.find(line[origin])
+        target = ref_g.vs.find(line[dest])
+        try:
+            eid = ref_g.get_eid(source.index,target.index)
+            ref_w = ref_g.es[eid]['weight']
+        except:
+            ref_w = 0
+        if ref_w != 0:
+            return float(line[w])/ref_w
+        else:
+            return 0
+    return weight_func
+
 def main(argv):
-    airfile_name = argv[1]
-    filter1 = build_filter(CARRIER='WN')
-    filter2 = build_filter(CARRIER='DL')
+    path = argv[1]
+    for year in range(2005,2010):
+        airfile_name = path+'/T'+str(year)+'.csv'
+        for month in range(1,13):
+            filter0 = build_filter(MONTH=str(month))
+            filter1 = build_filter(CARRIER='NW',MONTH=str(month))
+            filter2 = build_filter(CARRIER='DL',MONTH=str(month))
 
-    g1 = build_airgraph(airfile_name,filter1,'PASSENGERS')
-    g2 = build_airgraph(airfile_name,filter2,'PASSENGERS')
+            weight = weight_from_string('PASSENGERS')
+            g = build_airgraph(airfile_name,filter0,weight)
 
-    print correlation_pairs(g1,g2)
-    print correlation_common(g1,g2)
-    print correlation_either(g1,g2)
+            weight_ratio = weight_from_ratio(g,'PASSENGERS')
+
+            g1 = build_airgraph(airfile_name,filter1,weight_ratio)
+            g2 = build_airgraph(airfile_name,filter2,weight_ratio)
+
+            cp = correlation_pairs(g1,g2)
+            print cp
+            cor1.append(cp)
+            cc = correlation_common(g1,g2)
+            cor2.append(cc)
+            ce = correlation_either(g1,g2)
+            cor3.append(ce)
         
 if __name__ == "__main__":
     main(sys.argv)
