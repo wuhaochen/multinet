@@ -123,11 +123,11 @@ def attach_focus_edges(g):
                 carriers.append(key)
 
     total = {}
-    All = 0
+    All = 0.0
     for airline in carriers:
-	total[airline] = 0
+	total[airline] = 0.0
     for edge in g.es:
-	edge['total'] = 0
+	edge['total'] = 0.0
     for edge in g.es:
 	for key in edge['weight']:
             edge['total'] += edge['weight'][key]
@@ -162,25 +162,25 @@ def attach_focus_nodes(g):
                 carriers.append(key)
 
     total = {}
-    All = 0
+    All = 0.0
     for airline in carriers:
-	total[airline] = 0
+	total[airline] = 0.0
     for node in g.vs:
-        node['in_total'] = 0
-        node['out_total'] = 0
+        node['in_total'] = 0.0
+        node['out_total'] = 0.0
         node['weight'] = [{},{},{}]
     for edge in g.es:
 	for key in edge['weight']:
             if not g.vs[edge.target]['weight'][0].has_key(key):
-                g.vs[edge.target]['weight'][0][key] = 0
+                g.vs[edge.target]['weight'][0][key] = 0.0
             if not g.vs[edge.target]['weight'][2].has_key(key):
-                g.vs[edge.target]['weight'][2][key] = 0
+                g.vs[edge.target]['weight'][2][key] = 0.0
             g.vs[edge.target]['weight'][0][key] += edge['weight'][key]
             g.vs[edge.target]['weight'][2][key] += edge['weight'][key]
             if not g.vs[edge.source]['weight'][1].has_key(key):
-                g.vs[edge.source]['weight'][1][key] = 0
+                g.vs[edge.source]['weight'][1][key] = 0.0
             if not g.vs[edge.source]['weight'][2].has_key(key):
-                g.vs[edge.source]['weight'][2][key] = 0
+                g.vs[edge.source]['weight'][2][key] = 0.0
             g.vs[edge.source]['weight'][1][key] += edge['weight'][key]
             g.vs[edge.source]['weight'][2][key] += edge['weight'][key]
             

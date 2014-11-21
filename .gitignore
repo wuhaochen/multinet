@@ -1,0 +1,4 @@
+*.pyc
+*~
+pic/*
+result/*
