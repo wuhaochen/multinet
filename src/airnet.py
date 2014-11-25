@@ -5,7 +5,6 @@ import csv
 
 import filters
 import weight
-import measures
 
 def has_vertex(graph,vertex_name):
     try:
@@ -35,7 +34,7 @@ def build_airgraph(file_name,filter_func,weight_func,multi_layer=False,layer_s='
     airnet = igraph.Graph(directed=True)
 
     with open(file_name) as airfile:
-        airreader = csv.reader(airfile,delimiter=',',quotechar='\"')
+        airreader = csv.reader(airfile,delimiter=',',quotechar='\"',quoting=csv.QUOTE_NONNUMERIC)
         index_line = airreader.next()
 
         index = 0

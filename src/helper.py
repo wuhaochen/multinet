@@ -1,5 +1,6 @@
 #!/usr/bin/python
 
+from filters import *
 import igraph
 
 def g_katrina():
@@ -16,7 +17,8 @@ def g_katrina():
 def subgraph_edges(airfile,l):
     filt_c = build_and_filter(CLASS='F')
     filt_l = build_in_and_filter(CARRIER=l)
-    filt = combine_filters_and(filt_c,filt_l)
+    filt_r = build_nand_filter(DEPARTURES_SCHEDULED='0.00')
+    filt = combine_filters_and(filt_c,filt_l,filt_r)
     weight = weight_from_string('PASSENGERS')
 
     g = build_airgraph(airfile,filt,weight,True,'CARRIER')
@@ -44,7 +46,8 @@ def subgraph_edges(airfile,l):
 def subgraph_nodes(airfile,l):
     filt_c = build_and_filter(CLASS='F')
     filt_l = build_in_and_filter(CARRIER=l)
-    filt = combine_filters_and(filt_c,filt_l)
+    filt_r = build_nand_filter(DEPARTURES_SCHEDULED='0.00')
+    filt = combine_filters_and(filt_c,filt_l,filt_r)
     weight = weight_from_string('PASSENGERS')
 
     g = build_airgraph(airfile,filt,weight,True,'CARRIER')

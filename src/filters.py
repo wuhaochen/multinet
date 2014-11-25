@@ -54,3 +54,8 @@ def build_either_in_filter(List):
 
 def build_both_in_filter(List):
     return build_in_and_filter(ORIGIN=List,DEST=List)
+
+def regular_filter():
+    filt_class = build_and_filter(CLASS='F')
+    filt_scheduled = build_nand_filter(DEPARTURES_SCHEDULED='0.00')
+    return combine_filters_and(filt_class,filt_scheduled)
