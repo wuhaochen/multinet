@@ -74,6 +74,36 @@ def residuals(x,y):
     yhat = map(lambda x:alpha+beta*x,x)
     return map(lambda x,y:x-y,y,yhat)
 
+def accumulate_SSE(error,edge_list):
+    if (len(error) != len(edge_list)):
+        raise 'Length of arguments do not match.'
+
+    SSE = {}
+    for i in range(len(error)):
+        edge = edge_list[i]
+        if not SSE.has_key(edge[0]):
+            SSE[edge[0]] = 0.0
+        if not SSE.has_key(edge[1]):
+            SSE[edge[1]] = 0.0
+        square_error = pow(error[i],2)
+        SSE[edge[0]] += square_error
+        SSE[edge[1]] += square_error
+
+    return SSE
+
+def SSE_either(og1,og2):
+    g1 = og1.copy()
+    g2 = og2.copy()
+
+    fill_edges(g1,g2)
+    fill_edges(g2,g1)
+
+    cl = corresponding_edge_list(g1,g2)
+    error = residuals(cl[0],cl[1])
+    SSE = accumulate_SSE(error,cl[2])
+
+    return SSE
+
 def correlation_pairs(og1,og2):
     g1 = og1.copy()
     g2 = og2.copy()

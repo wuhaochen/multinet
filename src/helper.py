@@ -5,20 +5,22 @@ import igraph
 
 def g_katrina():
     airfile = default_path + 'T2005.csv'
-    filt8 = build_and_filter(MONTH='8',CLASS='F')
-    filt9 = build_and_filter(MONTH='9',CLASS='F')
+    filt_r = regular_filter()
+    filt8 = build_and_filter(MONTH=8)
+    filt_8 = combine_filters_and(filt_r,filt8)
+    filt9 = build_and_filter(MONTH=9)
+    filt_9 = combine_filters_and(filt_r,filt9)
     weight = weight_from_string('PASSENGERS')
 
-    g8 = build_airgraph(airfile,filt8,weight)
-    g9 = build_airgraph(airfile,filt9,weight)
+    g8 = build_airgraph(airfile,filt_8,weight)
+    g9 = build_airgraph(airfile,filt_9,weight)
 
     return [g8,g9]
 
 def subgraph_edges(airfile,l):
-    filt_c = build_and_filter(CLASS='F')
+    filt_r = regular_filter()
     filt_l = build_in_and_filter(CARRIER=l)
-    filt_r = build_nand_filter(DEPARTURES_SCHEDULED='0.00')
-    filt = combine_filters_and(filt_c,filt_l,filt_r)
+    filt = combine_filters_and(filt_l,filt_r)
     weight = weight_from_string('PASSENGERS')
 
     g = build_airgraph(airfile,filt,weight,True,'CARRIER')
@@ -44,10 +46,9 @@ def subgraph_edges(airfile,l):
     return subgraph
 
 def subgraph_nodes(airfile,l):
-    filt_c = build_and_filter(CLASS='F')
+    filt_r = regular_filter()
     filt_l = build_in_and_filter(CARRIER=l)
-    filt_r = build_nand_filter(DEPARTURES_SCHEDULED='0.00')
-    filt = combine_filters_and(filt_c,filt_l,filt_r)
+    filt = combine_filters_and(filt_l,filt_r)
     weight = weight_from_string('PASSENGERS')
 
     g = build_airgraph(airfile,filt,weight,True,'CARRIER')
