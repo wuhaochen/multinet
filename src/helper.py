@@ -17,6 +17,15 @@ def g_katrina():
 
     return [g8,g9]
 
+def g_by_month(year,month):
+    airfile = default_path + 'T' + str(year) +'.csv'
+    filt_r = regular_filter()
+    filt_m = build_and_filter(MONTH=month)
+    filt = combine_filters_and(filt_r,filt_m)
+    weight = weight_from_string('PASSENGERS')
+
+    return build_airgraph(airfile,filt,weight)
+
 def subgraph_edges(airfile,l):
     filt_r = regular_filter()
     filt_l = build_in_and_filter(CARRIER=l)
