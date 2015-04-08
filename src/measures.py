@@ -162,7 +162,35 @@ def gini(g):
     
     return diff_sum/norm
 
-def attach_focus_edges(g):
+def bipartite(g):
+    carriers = []
+    for edge in g.es:
+	for key in edge['weight']:
+            if not key in carriers:
+                carriers.append(key)
+
+    for node in g.vs:
+        node['strength'] = {}
+        for carrier in carriers:
+            node['strength'][carrier] = 0.0
+
+    for edge in g.es:
+	for key in edge['weight']:
+            g.vs[edge.target]['strength'][key] += edge['weight'][key]
+            g.vs[edge.source]['strength'][key] += edge['weight'][key]
+
+    with open('bi.txt','w') as f:
+        f.write('Node')
+        for carrier in carriers:
+            f.write(','+carrier)
+        f.write('\n')
+        for node in g.vs:
+            f.write(node['name'])
+            for carrier in carriers:
+                f.write(','+str(node['strength'][carrier]))
+            f.write('\n')
+
+def attach_focus_edges(g,normalize=True):
     carriers = []
     for edge in g.es:
 	for key in edge['weight']:
@@ -204,9 +232,13 @@ def attach_focus_edges(g):
                     focus[carrier] += q*math.log(q/r)
             max_focus = math.log(All/total[carrier])
             caf[carrier]=focus[carrier]/max_focus
-    return caf
+    g['total'] = total
+    if normalize:
+        return caf
+    else:
+        return focus
 
-def attach_focus_nodes(g):
+def attach_focus_nodes(g,normalize = True):
     IN = 0
     OUT = 1
     TOTAL = 2
@@ -294,9 +326,36 @@ def attach_focus_nodes(g):
                     q = node['weight'][TOTAL][carrier]/total[carrier]/2.0
                     focus[TOTAL][carrier] += q*math.log(q/r)
 
-            max_focus = math.log(All/total[carrier])
-            caf[IN][carrier]=focus[IN][carrier]/max_focus
-            caf[OUT][carrier]=focus[OUT][carrier]/max_focus
-            caf[TOTAL][carrier]=focus[TOTAL][carrier]/max_focus
+            if normalize:
+                max_focus = math.log(All/total[carrier])
+                caf[IN][carrier]=focus[IN][carrier]/max_focus
+                caf[OUT][carrier]=focus[OUT][carrier]/max_focus
+                caf[TOTAL][carrier]=focus[TOTAL][carrier]/max_focus
+            else:
+                caf[IN][carrier]=focus[IN][carrier]
+                caf[OUT][carrier]=focus[OUT][carrier]
+                caf[TOTAL][carrier]=focus[TOTAL][carrier]
 
     return caf
+
+def count_by_layer(g):
+    count = {}
+    for edge in g.es:
+        for carrier in edge['weight']:
+            if not count.has_key(carrier):
+                count[carrier] = 0.0
+            count[carrier] += edge['weight'][carrier]
+
+    return count
+
+def reduce_to_degree(g):
+    for edge in g.es:
+        for carrier in edge['weight']:
+            if edge['weight'][carrier] != 0.0:
+                edge['weight'][carrier] = 1.0
+
+def count_all(g):
+    count = 0
+    for edge in g.es:
+        count += edge['weight']
+    return count

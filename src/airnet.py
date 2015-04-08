@@ -32,6 +32,7 @@ def has_edge(graph,source_name,target_name):
 def build_airgraph(file_name,filter_func,weight_func,multi_layer=False,layer_s=''):
     index_dict = {}
     airnet = igraph.Graph(directed=True)
+    airnet['layers'] = []
 
     with open(file_name) as airfile:
         airreader = csv.reader(airfile,delimiter=',',quotechar='\"',quoting=csv.QUOTE_NONNUMERIC)
@@ -70,6 +71,8 @@ def build_airgraph(file_name,filter_func,weight_func,multi_layer=False,layer_s='
             eid = airnet.get_eid(source.index,target.index)
             if multi_layer:
                 l = index_dict[layer_s]
+                if not line[l] in airnet['layers']:
+                    airnet['layers'].append(line[l])
                 if not airnet.es[eid]['weight'].has_key(line[l]):
                     airnet.es[eid]['weight'][line[l]] = 0
                 airnet.es[eid]['weight'][line[l]] += weight_func(index_dict,line)

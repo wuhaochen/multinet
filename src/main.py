@@ -1,6 +1,11 @@
 #!/usr/bin/python
 
 from airnet import *
+from helper import *
+from measures import *
+from filters import *
+from weight import *
+import sys
 
 default_path = '/home/hcwu/data/transtat/'
 
@@ -23,16 +28,25 @@ focus_out = {}
 
 graphs = []
 
+WN = []
+DL = []
+UA = []
+AA = []
+US = []
+
+All = []
+
 def main(argv):
     if argv and len(argv) > 1:
         path = argv[1]
     else:
         path = default_path
 
-    for carrier in Carriers:
+        '''    for carrier in Carriers:
         focus[carrier] = []
         focus_in[carrier] = []
         focus_out[carrier] = []
+        '''
 
 #    airfile_name = path +'/T1998.csv'
     #filt1 = build_and_filter(CARRIER='DL',MONTH=str('12'),CLASS='F')
@@ -58,23 +72,23 @@ def main(argv):
             #filt1 = build_and_filter(CARRIER='DL',MONTH=str(month),CLASS='F')
             #filt2 = build_and_filter(CARRIER='NW',MONTH=str(month),CLASS='F')
             #airports = []
-            print month
-            filt1 = build_in_and_filter(CARRIER=Carriers)
-            filt2 = build_and_filter(MONTH=str(month),CLASS='F')
-            filt = lambda x,y:filt1(x,y) and filt2(x,y)
+            print str(year)+' ' +str(month)
+            filt_r = regular_filter()
+            filt_m = build_and_filter(MONTH = month)
+            filt = combine_filters_and(filt_r,filt_m)
             weight = weight_from_string('PASSENGERS')
-            g = build_airgraph(airfile_name,filt,weight,True,'CARRIER')
-            temp = attach_focus_nodes(g)
+            #g = build_airgraph(airfile_name,filt,weight,True,'CARRIER')
+            g = build_airgraph(airfile_name,filt,weight)
+            All.append(count_all(g))
+            #reduce_to_degree(g)
+            #temp = attach_focus_nodes(g)
+            #temp = ['','',count_by_layer(g)]
 
-            for f in temp[0]:
-                focus_in[f].append(temp[0][f])
-
-            for f in temp[1]:
-                focus_out[f].append(temp[1][f])
-
-            for f in temp[2]:
-                focus[f].append(temp[2][f])
-            
+            #WN.append(temp[2]['WN'])
+            #DL.append(temp[2]['DL'])
+            #UA.append(temp[2]['UA'])
+            #AA.append(temp[2]['AA'])
+            #US.append(temp[2]['US'])
             '''for node in gt.vs:
                 airports.append(node['name'])
 

@@ -1,7 +1,13 @@
 #!/usr/bin/python
 
 from filters import *
+from weight import *
+from airnet import *
 import igraph
+import random
+import matplotlib.pyplot as plt
+
+from main import default_path
 
 def g_katrina():
     airfile = default_path + 'T2005.csv'
@@ -25,6 +31,12 @@ def g_by_month(year,month):
     weight = weight_from_string('PASSENGERS')
 
     return build_airgraph(airfile,filt,weight)
+
+def mg_by_year(year):
+    airfile = default_path + 'T' + str(year) + '.csv'
+    filt = regular_filter()
+    weightf = weight_from_string('PASSENGERS')
+    return build_airgraph(airfile,filt,weightf,True,'CARRIER')
 
 def subgraph_edges(airfile,l):
     filt_r = regular_filter()
@@ -95,3 +107,47 @@ def subgraph_nodes(airfile,l):
         subgraph.add_edge(source,target,weight=edge['weight'])
 
     return subgraph
+
+def get_carriers(g):
+    carriers = []
+    for edge in g.es:
+        for key in edge['weight']:
+            if not key in carriers:
+                carriers.append(key)
+    return carriers
+
+def rewire_layer(g,nround):
+    carriers = get_carriers(g)
+    for carrier in carriers:
+        for i in range(nround):
+            redge = random.sample(g.es,1)[0]
+            if redge['weight'].has_key(carrier):
+                nodes = random.sample(g.vs,2)
+                source = nodes[0]
+                target = nodes[1]
+                try:
+                    eid = g.get_eid(source.index,target.index)
+                except:
+                    g.add_edge(source,target)
+                    eid = g.get_eid(source.index,target.index)
+                    g.es[eid]['weight'] = {}
+                if not g.es[eid]['weight'].has_key(carrier):
+                    g.es[eid]['weight'][carrier] = 0.0
+                weight = redge['weight'][carrier]
+                redge['weight'][carrier] = g.es[eid]['weight'][carrier]
+                g.es[eid]['weight'][carrier] = weight
+                
+def rewire_node(g,nround):
+    carriers = get_carriers(g)
+    for edge in g.es:
+        for i in range(nround):
+            candidates = random.sample(carriers,2)
+            if not edge['weight'].has_key(candidates[0]):
+                edge['weight'][candidates[0]] = 0.0
+            if not edge['weight'].has_key(candidates[1]):
+                edge['weight'][candidates[1]] = 0.0
+
+            weight = edge['weight'][candidates[0]]
+            edge['weight'][candidates[0]] = edge['weight'][candidates[1]]
+            edge['weight'][candidates[1]] = weight
+
