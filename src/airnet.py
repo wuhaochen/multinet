@@ -3,9 +3,6 @@
 import igraph
 import csv
 
-import filters
-import weight
-
 def has_vertex(graph,vertex_name):
     try:
         graph.vs.find(vertex_name)

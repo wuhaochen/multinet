@@ -9,8 +9,8 @@ geo_dist = lambda x,y:vincenty(x,y).meters
 
 import scipy.cluster.hierarchy as hier
 
-from airnet import *
-from measures import *
+import airnet
+import measures
 
 # Return a new igraph object with only specified layers.
 def sub_layers(og,layers):
@@ -53,7 +53,7 @@ def aggregate(g,k):
             print lpair
             sub_graph = sub_layers(g,lpair)
             dkl = 0.0
-            focus = attach_focus_edges(sub_graph,False)
+            focus = measures.attach_focus_edges(sub_graph,False)
             for layer in focus:
                 dkl += math.log(1+(sub_graph['total'][layer])) * focus[layer]
 #            dkl = sum(attach_focus_edges(sub_graph,False).values())

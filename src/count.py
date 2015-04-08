@@ -1,10 +1,8 @@
 #!/usr/bin/python
 
-from airnet import *
-from helper import *
-from measures import *
-from filters import *
-from weight import *
+import airnet
+import filters
+import weight
 
 def number_of_edge_of_new_airport(carrier,start=1999,end=2014,trace = False):
     dict_l = []
@@ -12,11 +10,11 @@ def number_of_edge_of_new_airport(carrier,start=1999,end=2014,trace = False):
         airfile_name = default_path+'/T'+str(year)+'.csv'
         for month in range(1,13):
             dest_d = {}
-            filt_r = regular_filter()
-            filt_s = build_and_filter(CARRIER=carrier,MONTH=month)
-            filt = combine_filters_and(filt_s,filt_r)
-            weight = weight_from_string('PASSENGERS')
-            g = build_airgraph(airfile_name,filt,weight)
+            filt_r = filters.regular_filter()
+            filt_s = filters.build_and_filter(CARRIER=carrier,MONTH=month)
+            filt = filters.combine_filters_and(filt_s,filt_r)
+            weightf = weight.weight_from_string('PASSENGERS')
+            g = airnet.build_airgraph(airfile_name,filt,weightf)
             for node in g.vs:
                 dest_d[node['name']] = node.outdegree()
             dict_l.append(dest_d)

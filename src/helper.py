@@ -1,8 +1,9 @@
 #!/usr/bin/python
 
-from filters import *
-from weight import *
-from airnet import *
+import filters
+import weight
+import airnet
+
 import igraph
 import random
 import matplotlib.pyplot as plt
@@ -11,40 +12,40 @@ from main import default_path
 
 def g_katrina():
     airfile = default_path + 'T2005.csv'
-    filt_r = regular_filter()
-    filt8 = build_and_filter(MONTH=8)
-    filt_8 = combine_filters_and(filt_r,filt8)
-    filt9 = build_and_filter(MONTH=9)
-    filt_9 = combine_filters_and(filt_r,filt9)
-    weight = weight_from_string('PASSENGERS')
+    filt_r = filters.regular_filter()
+    filt8 = filters.build_and_filter(MONTH=8)
+    filt_8 = filters.combine_filters_and(filt_r,filt8)
+    filt9 = filters.build_and_filter(MONTH=9)
+    filt_9 = filters.combine_filters_and(filt_r,filt9)
+    weightf = weight.weight_from_string('PASSENGERS')
 
-    g8 = build_airgraph(airfile,filt_8,weight)
-    g9 = build_airgraph(airfile,filt_9,weight)
+    g8 = airnet.build_airgraph(airfile,filt_8,weightf)
+    g9 = airnet.build_airgraph(airfile,filt_9,weightf)
 
     return [g8,g9]
 
 def g_by_month(year,month):
     airfile = default_path + 'T' + str(year) +'.csv'
-    filt_r = regular_filter()
-    filt_m = build_and_filter(MONTH=month)
-    filt = combine_filters_and(filt_r,filt_m)
-    weight = weight_from_string('PASSENGERS')
+    filt_r = filters.regular_filter()
+    filt_m = filters.build_and_filter(MONTH=month)
+    filt = filters.combine_filters_and(filt_r,filt_m)
+    weightf = weight.weight_from_string('PASSENGERS')
 
-    return build_airgraph(airfile,filt,weight)
+    return airnet.build_airgraph(airfile,filt,weightf)
 
 def mg_by_year(year):
     airfile = default_path + 'T' + str(year) + '.csv'
-    filt = regular_filter()
-    weightf = weight_from_string('PASSENGERS')
-    return build_airgraph(airfile,filt,weightf,True,'CARRIER')
+    filt = filters.regular_filter()
+    weightf = weight.weight_from_string('PASSENGERS')
+    return airnet.build_airgraph(airfile,filt,weightf,True,'CARRIER')
 
 def subgraph_edges(airfile,l):
-    filt_r = regular_filter()
-    filt_l = build_in_and_filter(CARRIER=l)
-    filt = combine_filters_and(filt_l,filt_r)
-    weight = weight_from_string('PASSENGERS')
+    filt_r = filters.regular_filter()
+    filt_l = filters.build_in_and_filter(CARRIER=l)
+    filt = filters.combine_filters_and(filt_l,filt_r)
+    weight = weight.weight_from_string('PASSENGERS')
 
-    g = build_airgraph(airfile,filt,weight,True,'CARRIER')
+    g = airnet.build_airgraph(airfile,filt,weight,True,'CARRIER')
     
     subgraph_edges = []
     for edge in g.es:
@@ -67,12 +68,12 @@ def subgraph_edges(airfile,l):
     return subgraph
 
 def subgraph_nodes(airfile,l):
-    filt_r = regular_filter()
-    filt_l = build_in_and_filter(CARRIER=l)
-    filt = combine_filters_and(filt_l,filt_r)
-    weight = weight_from_string('PASSENGERS')
+    filt_r = filters.regular_filter()
+    filt_l = filters.build_in_and_filter(CARRIER=l)
+    filt = filters.combine_filters_and(filt_l,filt_r)
+    weightf = weight.weight_from_string('PASSENGERS')
 
-    g = build_airgraph(airfile,filt,weight,True,'CARRIER')
+    g = airnet.build_airgraph(airfile,filt,weightf,True,'CARRIER')
 
     for node in g.vs:
         node['strength'] = {}
