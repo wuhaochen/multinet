@@ -6,7 +6,7 @@ import os
 
 os.chdir(working_path)
 
-from airnet import *
+from multinet import *
 from filters import *
 from weight import *
 from helper import *

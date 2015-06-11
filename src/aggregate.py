@@ -9,18 +9,20 @@ geo_dist = lambda x,y:vincenty(x,y).meters
 
 import scipy.cluster.hierarchy as hier
 
-import airnet
+import multinet
 import measures
 
 # Return a new igraph object with only specified layers.
 def sub_layers(og,layers):
     g = copy.deepcopy(og)
-    for edge in g.es:
+    for edge in g.edges():
         new_weight = {}
+        source = edge[0]
+        target = edge[1]
         for key in layers:
-            if key in edge['weight']:
-                new_weight[key] = edge['weight'][key]
-        edge['weight'] = new_weight
+            if key in g[source][target]['weight']:
+                new_weight[key] = g[source][target]['weight'][key]
+        g[source][target]['weight'] = new_weight
     g['layers'] = list(layers) 
     return g
 
@@ -33,13 +35,15 @@ def merge_layers(g,layers):
     new_layer = new_layer.strip()
     g['layers'].append(new_layer)
 
-    for edge in g.es:
+    for edge in g.edges():
         new_weight = 0.0
+        source = edge[0]
+        target = edge[1]
         for layer in layers:
-            if layer in edge['weight']:
-                new_weight += edge['weight'].pop(layer)
+            if layer in g[source][target]['weight']:
+                new_weight += g[source][target]['weight'].pop(layer)
         if new_weight != 0:
-            edge['weight'][new_layer] = new_weight
+            g[source][target]['weight'][new_layer] = new_weight
 
     return 0
 

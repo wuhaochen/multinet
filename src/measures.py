@@ -193,7 +193,7 @@ def bipartite(g):
 def attach_focus_edges(g,normalize=True):
     carriers = []
     for edge in g.es:
-	for key in edge['weight']:
+        for key in edge['weight']:
             if not key in carriers:
                 carriers.append(key)
 

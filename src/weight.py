@@ -11,11 +11,10 @@ def weight_from_ratio(ref_g,weight_s):
         w = index_dict[weight_s]
         origin = index_dict['ORIGIN']
         dest = index_dict['DEST']
-        source = ref_g.vs.find(line[origin])
-        target = ref_g.vs.find(line[dest])
+        source = line[origin]
+        target = line[dest]
         try:
-            eid = ref_g.get_eid(source.index,target.index)
-            ref_w = ref_g.es[eid]['weight']
+            ref_w = ref_g[source][target]['weight']
         except:
             ref_w = 0
         if ref_w != 0:
