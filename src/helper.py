@@ -2,11 +2,12 @@
 
 import filters
 import weight
-import airnet
+import multinet
 
 import igraph
 import random
 import matplotlib.pyplot as plt
+import networkx as nx
 
 from main import default_path
 
@@ -19,8 +20,8 @@ def g_katrina():
     filt_9 = filters.combine_filters_and(filt_r,filt9)
     weightf = weight.weight_from_string('PASSENGERS')
 
-    g8 = airnet.build_airgraph(airfile,filt_8,weightf)
-    g9 = airnet.build_airgraph(airfile,filt_9,weightf)
+    g8 = multinet.graph_from_csv(airfile,filt_8,weightf)
+    g9 = multinet.graph_from_csv(airfile,filt_9,weightf)
 
     return [g8,g9]
 
@@ -31,13 +32,13 @@ def g_by_month(year,month):
     filt = filters.combine_filters_and(filt_r,filt_m)
     weightf = weight.weight_from_string('PASSENGERS')
 
-    return airnet.build_airgraph(airfile,filt,weightf)
+    return multinet.graph_from_csv(airfile,filt,weightf)
 
 def mg_by_year(year):
     airfile = default_path + 'T' + str(year) + '.csv'
     filt = filters.regular_filter()
     weightf = weight.weight_from_string('PASSENGERS')
-    return airnet.build_airgraph(airfile,filt,weightf,True,'CARRIER')
+    return multinet.graph_from_csv(airfile,filt,weightf,True,'CARRIER')
 
 def subgraph_edges(airfile,l):
     filt_r = filters.regular_filter()
@@ -45,7 +46,7 @@ def subgraph_edges(airfile,l):
     filt = filters.combine_filters_and(filt_l,filt_r)
     weight = weight.weight_from_string('PASSENGERS')
 
-    g = airnet.build_airgraph(airfile,filt,weight,True,'CARRIER')
+    g = multinet.graph_from_csv(airfile,filt,weight,True,'CARRIER')
     
     subgraph_edges = []
     for edge in g.es:
@@ -57,7 +58,7 @@ def subgraph_edges(airfile,l):
         subgraph_nodes[edge.source] = True
         subgraph_nodes[edge.target] = True
 
-    subgraph = igraph.Graph(directed = True)
+    subgraph = nx.DiGraph()
     for node in subgraph_nodes:
         subgraph.add_vertex(g.vs[node]['name'])
     for edge in subgraph_edges:
@@ -73,7 +74,7 @@ def subgraph_nodes(airfile,l):
     filt = filters.combine_filters_and(filt_l,filt_r)
     weightf = weight.weight_from_string('PASSENGERS')
 
-    g = airnet.build_airgraph(airfile,filt,weightf,True,'CARRIER')
+    g = multinet.graph_from_csv(airfile,filt,weightf,True,'CARRIER')
 
     for node in g.vs:
         node['strength'] = {}

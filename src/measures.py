@@ -162,32 +162,50 @@ def gini(g):
     
     return diff_sum/norm
 
+def bipartize(g,mode):
+    bipartite_graph = nx.Graph()
+    layers = get_layer_list(g)
+    bipartite_graph.add_nodes_from(layers,bipartite = 0)
+    if isinstance(mode,basestring):
+        mstr = mode.lower()
+        if mstr in set(['nodes','node','vertices','vertex','n','v']):
+            bipartite_graph.add_nodes_from(g,bipartite = 1)
+        elif mstr in set(['edges','edge','arcs','arc','e','a']):
+            bipartite_graph.add_nodes_from(g.edges(),bipartite = 1)
+        else:
+            raise "Mode does not exist!"
+    else:
+        raise "Mode does not exist!"
+    return bipartite_graph
+    
 def bipartite(g):
     carriers = []
-    for edge in g.es:
-	for key in edge['weight']:
+    for source,target in g.edges():
+        edge = g[source][target]
+        for key in edge['weight']:
             if not key in carriers:
                 carriers.append(key)
 
-    for node in g.vs:
-        node['strength'] = {}
+    for node in g.node():
+        g.node[node]['strength'] = {}
         for carrier in carriers:
-            node['strength'][carrier] = 0.0
+            g.node[node]['strength'][carrier] = 0.0
 
-    for edge in g.es:
-	for key in edge['weight']:
-            g.vs[edge.target]['strength'][key] += edge['weight'][key]
-            g.vs[edge.source]['strength'][key] += edge['weight'][key]
+    for source,target in g.edges():
+        edge = g[source][target]
+        for key in edge['weight']:
+            g.node[target]['strength'][key] += edge['weight'][key]
+            g.node[source]['strength'][key] += edge['weight'][key]
 
     with open('bi.txt','w') as f:
         f.write('Node')
         for carrier in carriers:
             f.write(','+carrier)
         f.write('\n')
-        for node in g.vs:
-            f.write(node['name'])
+        for node in g.nodes():
+            f.write(node)
             for carrier in carriers:
-                f.write(','+str(node['strength'][carrier]))
+                f.write(','+str(g.node[node]['strength'][carrier]))
             f.write('\n')
 
 def attach_focus_edges(g,normalize=True):
@@ -204,7 +222,7 @@ def attach_focus_edges(g,normalize=True):
     for edge in g.es:
 	edge['total'] = 0.0
     for edge in g.es:
-	for key in edge['weight']:
+        for key in edge['weight']:
             edge['total'] += edge['weight'][key]
             total[key] += edge['weight'][key]
             All += edge['weight'][key]
@@ -244,7 +262,7 @@ def attach_focus_nodes(g,normalize = True):
     TOTAL = 2
     carriers = []
     for edge in g.es:
-	for key in edge['weight']:
+        for key in edge['weight']:
             if not key in carriers:
                 carriers.append(key)
 
@@ -340,22 +358,24 @@ def attach_focus_nodes(g,normalize = True):
 
 def count_by_layer(g):
     count = {}
-    for edge in g.es:
+    for source,target in g.edges():
+        edge = g[source][target]
         for carrier in edge['weight']:
             if not count.has_key(carrier):
                 count[carrier] = 0.0
             count[carrier] += edge['weight'][carrier]
-
     return count
 
 def reduce_to_degree(g):
-    for edge in g.es:
+    for source,target in g.edges():
+        edge = g[source][target]
         for carrier in edge['weight']:
             if edge['weight'][carrier] != 0.0:
                 edge['weight'][carrier] = 1.0
 
 def count_all(g):
     count = 0
-    for edge in g.es:
+    for source,target in g.edges():
+        edge = g[source][target]
         count += edge['weight']
     return count
