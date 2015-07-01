@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-from airnet import *
+from multinet import *
 from helper import *
 from measures import *
 from filters import *

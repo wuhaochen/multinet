@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-working_path = '/home/hcwu/work/research/airnet'
+working_path = '/home/hcwu/work/multinet'
 
 import os
 
@@ -13,4 +13,4 @@ from helper import *
 from count import *
 from aggregate import *
 
-from main import *
+#from main import *

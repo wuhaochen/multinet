@@ -3,6 +3,9 @@
 import math
 import scipy.stats as stats
 import matplotlib.pyplot as plt
+import copy
+import networkx as nx
+from networkx.algorithms import bipartite
 
 # Add nodes that in gref to g.
 # This function will modify g but not gref.
@@ -162,6 +165,19 @@ def gini(g):
     
     return diff_sum/norm
 
+def sub_layer(og,layer):
+    g = nx.DiGraph()
+    g.add_nodes_from(og)
+    for source,target in og.edges():
+        edge = og[source][target]
+        if layer in edge['weight']:
+            w = edge['weight'][layer]
+            g.add_edge(source,target,weight=w)
+    return g
+
+def get_layer_list(g):
+    return g.graph['layers']
+    
 def bipartize(g,mode):
     bipartite_graph = nx.Graph()
     layers = get_layer_list(g)
@@ -170,13 +186,32 @@ def bipartize(g,mode):
         mstr = mode.lower()
         if mstr in set(['nodes','node','vertices','vertex','n','v']):
             bipartite_graph.add_nodes_from(g,bipartite = 1)
+            for layer in layers:
+                sg = sub_layer(g,layer)
+                for node in sg.nodes():
+                    w = sg.degree(node,weight='weight')
+                    if w > 0:
+                        bipartite_graph.add_edge(layer,node,weight=w)
         elif mstr in set(['edges','edge','arcs','arc','e','a']):
             bipartite_graph.add_nodes_from(g.edges(),bipartite = 1)
+            for layer in layers:
+                sg = sub_layer(g,layer)
+                for source,target in sg.edges():
+                    edge = sg[source][target]
+                    bipartite_graph.add_edge(layer,(source,target),weight=edge['weight'])
         else:
             raise "Mode does not exist!"
     else:
         raise "Mode does not exist!"
     return bipartite_graph
+
+def focus(bg):
+    '''
+    Given a bipartite network, calculating the focus of the nodes.
+    '''
+    from networkx.algorithms import bipartite
+    top,bottom = bipartite.sets(bg)
+    
     
 def bipartite(g):
     carriers = []

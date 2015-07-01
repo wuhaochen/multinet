@@ -4,7 +4,6 @@ import filters
 import weight
 import multinet
 
-import igraph
 import random
 import matplotlib.pyplot as plt
 import networkx as nx
@@ -49,7 +48,8 @@ def subgraph_edges(airfile,l):
     g = multinet.graph_from_csv(airfile,filt,weight,True,'CARRIER')
     
     subgraph_edges = []
-    for edge in g.es:
+    for source,target in g.edges():
+        edge = g[source][target]
         if len(edge['weight']) == len(l):
             subgraph_edges.append(edge)
 
