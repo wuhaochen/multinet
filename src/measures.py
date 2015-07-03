@@ -194,17 +194,44 @@ def bipartize(g,mode):
                         bipartite_graph.add_edge(layer,node,weight=w)
         elif mstr in set(['edges','edge','arcs','arc','e','a']):
             bipartite_graph.add_nodes_from(g.edges(),bipartite = 1)
-            for layer in layers:
-                sg = sub_layer(g,layer)
-                for source,target in sg.edges():
-                    edge = sg[source][target]
-                    bipartite_graph.add_edge(layer,(source,target),weight=edge['weight'])
+            for source,target in g.edges():
+                layers = g[source][target]['weight']
+                for layer in layers:
+                    bipartite_graph.add_edge(layer,(source,target),weight=layers[layer])
+                    
         else:
             raise "Mode does not exist!"
     else:
         raise "Mode does not exist!"
     return bipartite_graph
 
+# def bipartize(g,mode):
+#     bipartite_graph = nx.Graph()
+#     layers = get_layer_list(g)
+#     bipartite_graph.add_nodes_from(layers,bipartite = 0)
+#     if isinstance(mode,basestring):
+#         mstr = mode.lower()
+#         if mstr in set(['nodes','node','vertices','vertex','n','v']):
+#             bipartite_graph.add_nodes_from(g,bipartite = 1)
+#             for layer in layers:
+#                 sg = sub_layer(g,layer)
+#                 for node in sg.nodes():
+#                     w = sg.degree(node,weight='weight')
+#                     if w > 0:
+#                         bipartite_graph.add_edge(layer,node,weight=w)
+#         elif mstr in set(['edges','edge','arcs','arc','e','a']):
+#             bipartite_graph.add_nodes_from(g.edges(),bipartite = 1)
+#             for layer in layers:
+#                 sg = sub_layer(g,layer)
+#                 for source,target in sg.edges():
+#                     edge = sg[source][target]
+#                     bipartite_graph.add_edge(layer,(source,target),weight=edge['weight'])
+#         else:
+#             raise "Mode does not exist!"
+#     else:
+#         raise "Mode does not exist!"
+#     return bipartite_graph
+    
 def focus(bg):
     '''
     Given a bipartite network, calculating the focus of the nodes.

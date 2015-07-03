@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 import networkx as nx
 
 from main import default_path
+from main import comtrade_path
 
 def g_katrina():
     airfile = default_path + 'T2005.csv'
@@ -38,6 +39,12 @@ def mg_by_year(year):
     filt = filters.regular_filter()
     weightf = weight.weight_from_string('PASSENGERS')
     return multinet.graph_from_csv(airfile,filt,weightf,True,'CARRIER')
+
+def mg_by_year_comtrade(year):
+    comfile = comtrade_path + 'C' + str(year) + '.csv'
+    filt = lambda x,y:True
+    weightf = weight.weight_from_string('v')
+    return multinet.graph_from_csv(comfile,filt,weightf,True,'hs6',ow='i',dw='j')
 
 def subgraph_edges(airfile,l):
     filt_r = filters.regular_filter()
