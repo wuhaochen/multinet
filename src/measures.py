@@ -205,6 +205,11 @@ def bipartize(g,mode):
         raise "Mode does not exist!"
     return bipartite_graph
 
+def bipartite_sets(bg):
+    top = set(n for n,d in bg.nodes(data=True) if d['bipartite']==0)
+    bottom = set(bg) - top
+    return (top,bottom)
+
 # def bipartize(g,mode):
 #     bipartite_graph = nx.Graph()
 #     layers = get_layer_list(g)
@@ -232,13 +237,33 @@ def bipartize(g,mode):
 #         raise "Mode does not exist!"
 #     return bipartite_graph
     
-def focus(bg):
+def attach_focus(bg):
     '''
     Given a bipartite network, calculating the focus of the nodes.
     '''
-    from networkx.algorithms import bipartite
-    top,bottom = bipartite.sets(bg)
-    
+    A = sum(bg[source][target]['weight'] for source,target in bg.edges())
+
+    for n in bg.nodes():
+        bg.node[n]['concentration'] = bg.degree(n,'weight')/A
+
+    from scipy.stats import entropy
+    from math import log
+
+    for n in bg.nodes():
+        pk = []
+        qk = []
+        for neighbor in bg.neighbors(n):
+            pk += [bg[n][neighbor]['weight']]
+            qk += [bg.node[neighbor]['concentration']]
+            
+        # The following two lines get rid of unwanted normalization of qk by entropy function
+        pk += [0]
+        qk += [1- sum(qk)]
+        bg.node[n]['dkl'] = entropy(pk,qk)
+        if A == sum(pk) or sum(pk) == 0:
+            bg.node[n]['focus'] = 0.0
+        else:
+            bg.node[n]['focus'] = bg.node[n]['dkl']/log(A/sum(pk))
     
 def bipartite(g):
     carriers = []
@@ -269,154 +294,6 @@ def bipartite(g):
             for carrier in carriers:
                 f.write(','+str(g.node[node]['strength'][carrier]))
             f.write('\n')
-
-def attach_focus_edges(g,normalize=True):
-    carriers = []
-    for edge in g.es:
-        for key in edge['weight']:
-            if not key in carriers:
-                carriers.append(key)
-
-    total = {}
-    All = 0.0
-    for airline in carriers:
-	total[airline] = 0.0
-    for edge in g.es:
-	edge['total'] = 0.0
-    for edge in g.es:
-        for key in edge['weight']:
-            edge['total'] += edge['weight'][key]
-            total[key] += edge['weight'][key]
-            All += edge['weight'][key]
-    
-    for edge in g.es:
-        if edge['total']!=0:
-            edge['focus'] = 0.0
-            for key in edge['weight']:
-                q = total[key]/All
-                if edge['weight'][key] != 0:
-                    r = edge['weight'][key]/edge['total']
-                    edge['focus'] += r*math.log(r/q)
-            max_focus = math.log(All/edge['total'])
-            edge['eaf'] = edge['focus']/max_focus
-
-    focus = {}
-    caf = {}
-    for carrier in carriers:
-        if total[carrier] != 0:
-            focus[carrier] = 0.0
-            for edge in g.es:
-                if edge['weight'].has_key(carrier) and edge['weight'][carrier]!=0:
-                    r = edge['total']/All
-                    q = edge['weight'][carrier]/total[carrier]
-                    focus[carrier] += q*math.log(q/r)
-            max_focus = math.log(All/total[carrier])
-            caf[carrier]=focus[carrier]/max_focus
-    g['total'] = total
-    if normalize:
-        return caf
-    else:
-        return focus
-
-def attach_focus_nodes(g,normalize = True):
-    IN = 0
-    OUT = 1
-    TOTAL = 2
-    carriers = []
-    for edge in g.es:
-        for key in edge['weight']:
-            if not key in carriers:
-                carriers.append(key)
-
-    total = {}
-    All = 0.0
-    for airline in carriers:
-	total[airline] = 0.0
-    for node in g.vs:
-        node['in_total'] = 0.0
-        node['out_total'] = 0.0
-        node['weight'] = [{},{},{}]
-    for edge in g.es:
-	for key in edge['weight']:
-            if not g.vs[edge.target]['weight'][IN].has_key(key):
-                g.vs[edge.target]['weight'][IN][key] = 0.0
-            if not g.vs[edge.target]['weight'][TOTAL].has_key(key):
-                g.vs[edge.target]['weight'][TOTAL][key] = 0.0
-            g.vs[edge.target]['weight'][IN][key] += edge['weight'][key]
-            g.vs[edge.target]['weight'][TOTAL][key] += edge['weight'][key]
-            if not g.vs[edge.source]['weight'][OUT].has_key(key):
-                g.vs[edge.source]['weight'][OUT][key] = 0.0
-            if not g.vs[edge.source]['weight'][TOTAL].has_key(key):
-                g.vs[edge.source]['weight'][TOTAL][key] = 0.0
-            g.vs[edge.source]['weight'][OUT][key] += edge['weight'][key]
-            g.vs[edge.source]['weight'][TOTAL][key] += edge['weight'][key]
-            
-            g.vs[edge.target]['in_total'] += edge['weight'][key]
-            g.vs[edge.source]['out_total'] += edge['weight'][key]
-            total[key] += edge['weight'][key]
-            All += edge['weight'][key]
-    
-    for node in g.vs:
-        node['in_focus'] = 0.0
-        node['out_focus'] = 0.0
-        node['focus'] = 0.0
-        if node['in_total'] != 0:
-            for key in node['weight'][IN]:
-                q = total[key]/All
-                if node['weight'][IN][key] != 0:
-                    ri = node['weight'][IN][key]/node['in_total']
-                    node['in_focus'] += ri*math.log(ri/q)
-            max_in_focus = math.log(All/node['in_total'])
-            node['in_naf'] = node['in_focus']/max_in_focus
-        if node['out_total'] != 0:
-            for key in node['weight'][OUT]:
-                q = total[key]/All
-                if node['weight'][OUT][key] != 0:
-                    ro = node['weight'][OUT][key]/node['out_total']
-                    node['out_focus'] += ro*math.log(ro/q)
-            max_out_focus = math.log(All/node['out_total'])
-            node['out_naf'] = node['out_focus']/max_out_focus
-        if (node['in_total']+node['out_total']) != 0:
-            for key in node['weight'][TOTAL]:
-                q = total[key]/All
-                if node['weight'][TOTAL][key] != 0:
-                    r = node['weight'][TOTAL][key]/(node['in_total']+node['out_total'])
-                    node['focus'] += r*math.log(r/q)
-            max_focus = math.log(2.0*All/(node['in_total']+node['out_total']))
-            node['naf'] = node['focus']/max_focus
-
-    focus = [{},{},{}]
-    caf = [{},{},{}]
-    for carrier in carriers:
-        if total[carrier] != 0:
-            focus[IN][carrier] = 0.0
-            focus[OUT][carrier] = 0.0
-            focus[TOTAL][carrier] = 0.0
-            for node in g.vs:
-                ri = node['in_total']/All
-                ro = node['out_total']/All
-                r = (node['in_total']+node['out_total'])/All/2.0
-                if node['weight'][IN].has_key(carrier) and node['weight'][IN][carrier]!=0:
-                    qi = node['weight'][IN][carrier]/total[carrier]
-                    focus[IN][carrier] += qi*math.log(qi/ri)
-                if node['weight'][1].has_key(carrier) and node['weight'][OUT][carrier]!=0:
-                    qo = node['weight'][OUT][carrier]/total[carrier]
-                    focus[OUT][carrier] += qo*math.log(qo/ro)
-                if node['weight'][TOTAL].has_key(carrier) and node['weight'][TOTAL][carrier]!=0:
-                    q = node['weight'][TOTAL][carrier]/total[carrier]/2.0
-                    focus[TOTAL][carrier] += q*math.log(q/r)
-
-            if normalize:
-                max_focus = math.log(All/total[carrier])
-                caf[IN][carrier]=focus[IN][carrier]/max_focus
-                caf[OUT][carrier]=focus[OUT][carrier]/max_focus
-                caf[TOTAL][carrier]=focus[TOTAL][carrier]/max_focus
-            else:
-                caf[IN][carrier]=focus[IN][carrier]
-                caf[OUT][carrier]=focus[OUT][carrier]
-                caf[TOTAL][carrier]=focus[TOTAL][carrier]
-
-    return caf
 
 def count_by_layer(g):
     count = {}

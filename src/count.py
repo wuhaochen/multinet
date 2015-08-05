@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-import airnet
+import multinet
 import filters
 import weight
 

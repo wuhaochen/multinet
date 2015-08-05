@@ -21,17 +21,17 @@ def sub_layers(og,layers):
             if key in g[source][target]['weight']:
                 new_weight[key] = g[source][target]['weight'][key]
         g[source][target]['weight'] = new_weight
-    g['layers'] = list(layers) 
+    g.graph['layers'] = list(layers) 
     return g
 
 def merge_layers(g,layers):
     new_layer = ''
     for layer in layers:
-        g['layers'].remove(layer)
+        g.graph['layers'].remove(layer)
         new_layer += layer
         new_layer += ' '
     new_layer = new_layer.strip()
-    g['layers'].append(new_layer)
+    g.graph['layers'].append(new_layer)
 
     for source,target in g.edges():
         new_weight = 0.0
@@ -45,24 +45,25 @@ def merge_layers(g,layers):
 
 def aggregate(g,k):
     merge_list = []
-    while len(g['layers']) > k:
-        min_dkl = float('inf')
+    while len(g.graph['layers']) > k:
+        min_djs = float('inf')
         min_pair = None
-        layer_pairs = itertools.combinations(g['layers'],2)
+        layer_pairs = itertools.combinations(g.graph['layers'],2)
         for lpair in layer_pairs:
             print lpair
             sub_graph = sub_layers(g,lpair)
-            dkl = 0.0
-            focus = measures.attach_focus_edges(sub_graph,False)
-            for layer in focus:
-                dkl += math.log(1+(sub_graph['total'][layer])) * focus[layer]
-#            dkl = sum(attach_focus_edges(sub_graph,False).values())
-#            dkl = sum(attach_focus_nodes(sub_graph,False)[2].values())
-            if dkl < min_dkl:
-                min_dkl = dkl
+            bi_mode = 'e'
+            bi_graph = measures.bipartize(sub_graph,bi_mode)
+            measures.attach_focus(bi_graph)
+            top,bottom = measures.bipartite_sets(bi_graph)
+            djs = 0.0
+            for layer in top:
+                djs += 0.5*bi_graph.node[layer]['dkl']
+            if djs < min_djs:
+                min_djs = djs
                 min_pair = lpair
         merge_layers(g,min_pair)
-        merge_list.append([min_pair,min_dkl])
+        merge_list.append([min_pair,min_djs])
     return merge_list
 
 def cluster(g,loc_file_name):
