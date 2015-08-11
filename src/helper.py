@@ -40,6 +40,12 @@ def mg_by_year(year):
     weightf = weight.weight_from_string('PASSENGERS')
     return multinet.graph_from_csv(airfile,filt,weightf,True,'CARRIER')
 
+def mg_all_by_year(year):
+    airfile = default_path + 'T' + str(year) + '.csv'
+    filt = filters.cargo_filter()
+    weightf = weight.weight_from_string('DEPARTURES_PERFORMED')
+    return multinet.graph_from_csv(airfile,filt,weightf,True,'CARRIER')
+    
 def mg_by_year_comtrade(year):
     comfile = comtrade_path + 'C' + str(year) + '.csv'
     filt = lambda x,y:True
@@ -125,38 +131,38 @@ def get_carriers(g):
                 carriers.append(key)
     return carriers
 
-def rewire_layer(g,nround):
-    carriers = get_carriers(g)
-    for carrier in carriers:
-        for i in range(nround):
-            redge = random.sample(g.es,1)[0]
-            if redge['weight'].has_key(carrier):
-                nodes = random.sample(g.vs,2)
-                source = nodes[0]
-                target = nodes[1]
-                try:
-                    eid = g.get_eid(source.index,target.index)
-                except:
-                    g.add_edge(source,target)
-                    eid = g.get_eid(source.index,target.index)
-                    g.es[eid]['weight'] = {}
-                if not g.es[eid]['weight'].has_key(carrier):
-                    g.es[eid]['weight'][carrier] = 0.0
-                weight = redge['weight'][carrier]
-                redge['weight'][carrier] = g.es[eid]['weight'][carrier]
-                g.es[eid]['weight'][carrier] = weight
+# def rewire_layer(g,nround):
+#     carriers = get_carriers(g)
+#     for carrier in carriers:
+#         for i in range(nround):
+#             redge = random.sample(g.es,1)[0]
+#             if redge['weight'].has_key(carrier):
+#                 nodes = random.sample(g.vs,2)
+#                 source = nodes[0]
+#                 target = nodes[1]
+#                 try:
+#                     eid = g.get_eid(source.index,target.index)
+#                 except:
+#                     g.add_edge(source,target)
+#                     eid = g.get_eid(source.index,target.index)
+#                     g.es[eid]['weight'] = {}
+#                 if not g.es[eid]['weight'].has_key(carrier):
+#                     g.es[eid]['weight'][carrier] = 0.0
+#                 weight = redge['weight'][carrier]
+#                 redge['weight'][carrier] = g.es[eid]['weight'][carrier]
+#                 g.es[eid]['weight'][carrier] = weight
                 
-def rewire_node(g,nround):
-    carriers = get_carriers(g)
-    for edge in g.es:
-        for i in range(nround):
-            candidates = random.sample(carriers,2)
-            if not edge['weight'].has_key(candidates[0]):
-                edge['weight'][candidates[0]] = 0.0
-            if not edge['weight'].has_key(candidates[1]):
-                edge['weight'][candidates[1]] = 0.0
+# def rewire_node(g,nround):
+#     carriers = get_carriers(g)
+#     for edge in g.es:
+#         for i in range(nround):
+#             candidates = random.sample(carriers,2)
+#             if not edge['weight'].has_key(candidates[0]):
+#                 edge['weight'][candidates[0]] = 0.0
+#             if not edge['weight'].has_key(candidates[1]):
+#                 edge['weight'][candidates[1]] = 0.0
 
-            weight = edge['weight'][candidates[0]]
-            edge['weight'][candidates[0]] = edge['weight'][candidates[1]]
-            edge['weight'][candidates[1]] = weight
+#             weight = edge['weight'][candidates[0]]
+#             edge['weight'][candidates[0]] = edge['weight'][candidates[1]]
+#             edge['weight'][candidates[1]] = weight
 

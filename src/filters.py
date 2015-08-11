@@ -60,3 +60,7 @@ def regular_filter():
     filt_scheduled = build_nand_filter(DEPARTURES_SCHEDULED=0.0)
     filt_passenger = build_nand_filter(PASSENGERS=0.0)
     return combine_filters_and(filt_class,filt_scheduled,filt_passenger)
+
+def cargo_filter():
+    filt_performed = build_nand_filter(DEPARTURES_PERFORMED=0.0)
+    return combine_filters_and(filt_performed)
