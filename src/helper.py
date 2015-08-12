@@ -2,6 +2,7 @@
 
 import filters
 import weight
+import layer
 import multinet
 
 import random
@@ -38,6 +39,7 @@ def mg_by_year(year):
     airfile = default_path + 'T' + str(year) + '.csv'
     filt = filters.regular_filter()
     weightf = weight.weight_from_string('PASSENGERS')
+    layerf = layer.layer_from_string('CARRIER')
     return multinet.graph_from_csv(airfile,filt,weightf,True,'CARRIER')
 
 def mg_all_by_year(year):
@@ -50,6 +52,7 @@ def mg_by_year_comtrade(year):
     comfile = comtrade_path + 'C' + str(year) + '.csv'
     filt = lambda x,y:True
     weightf = weight.weight_from_string('v')
+    layerf = layer.layer_from_string('hs6')
     return multinet.graph_from_csv(comfile,filt,weightf,True,'hs6',ow='i',dw='j')
 
 def subgraph_edges(airfile,l):

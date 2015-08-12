@@ -16,6 +16,16 @@ def graph_from_csv(file_name,filter_func,weight_func,multi_layer=False,layer_s='
     g = nx.DiGraph()
     g.graph['layers'] = []
 
+    if type(weight_func) == str:
+        import weight
+        weight_func = weight.weight_from_string(weight_func)
+
+    if type(layer_s) == str:
+        import layer
+        layer_func = layer.layer_from_string(layer_s)
+    else:
+        layer_func = layer_s
+        
     with open(file_name) as netfile:
         netreader = csv.reader(netfile,delimiter=',',quotechar='\"',quoting=csv.QUOTE_NONNUMERIC)
         index_line = netreader.next()
@@ -47,12 +57,12 @@ def graph_from_csv(file_name,filter_func,weight_func,multi_layer=False,layer_s='
                     g[origin][dest]['weight'] = 0.0
             
             if multi_layer:
-                l = index_dict[layer_s]
-                if not line[l] in g.graph['layers']:
-                    g.graph['layers'].append(line[l])
-                if not g[origin][dest]['weight'].has_key(line[l]):
-                    g[origin][dest]['weight'][line[l]] = 0.0
-                g[origin][dest]['weight'][line[l]] += weight_func(index_dict,line)
+                layer = layer_func(index_dict,line)
+                if not layer in g.graph['layers']:
+                    g.graph['layers'].append(layer)
+                if not g[origin][dest]['weight'].has_key(layer):
+                    g[origin][dest]['weight'][layer] = 0.0
+                g[origin][dest]['weight'][layer] += weight_func(index_dict,line)
             else:
                 g[origin][dest]['weight'] += weight_func(index_dict,line)
 
