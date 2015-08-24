@@ -4,6 +4,7 @@ import math
 import scipy.stats as stats
 import matplotlib.pyplot as plt
 import copy
+import itertools
 import networkx as nx
 from networkx.algorithms import bipartite
 
@@ -181,7 +182,9 @@ def get_layer_list(g):
 def bipartize(g,mode):
     bipartite_graph = nx.Graph()
     layers = get_layer_list(g)
-    bipartite_graph.add_nodes_from(layers,bipartite = 0)
+    prefix = lambda x: 'Carrier_'+ str(x)
+    layer_names = map(prefix,layers)
+    bipartite_graph.add_nodes_from(layer_names,bipartite = 0)
     if isinstance(mode,basestring):
         mstr = mode.lower()
         if mstr in set(['nodes','node','vertices','vertex','n','v']):
@@ -191,13 +194,13 @@ def bipartize(g,mode):
                 for node in sg.nodes():
                     w = sg.degree(node,weight='weight')
                     if w > 0:
-                        bipartite_graph.add_edge(layer,node,weight=w)
+                        bipartite_graph.add_edge(prefix(layer),node,weight=w)
         elif mstr in set(['edges','edge','arcs','arc','e','a']):
             bipartite_graph.add_nodes_from(g.edges(),bipartite = 1)
             for source,target in g.edges():
                 layers = g[source][target]['weight']
                 for layer in layers:
-                    bipartite_graph.add_edge(layer,(source,target),weight=layers[layer])
+                    bipartite_graph.add_edge(prefix(layer),(source,target),weight=layers[layer])
                     
         else:
             raise "Mode does not exist!"
@@ -210,6 +213,30 @@ def bipartite_sets(bg):
     bottom = set(bg) - top
     return (top,bottom)
 
+def all_pairs_shortest_paths(g,nl):
+    shortest_paths = {}
+    layers = get_layer_list(g)
+    nodes = g.nodes()
+    for pair in itertools.permutations(nodes,2):
+        shortest_paths[pair] = float('inf')
+
+    from aggregate import sub_layers
+    for subnet in itertools.combinations(layers,nl):
+        sg = sub_layers(g,subnet)
+        length = nx.all_pairs_shortest_path_length(sg)
+        for src in length:
+            for dst in length[src]:
+                if src == dst:
+                    continue
+                if length[src][dst] < shortest_paths[(src,dst)]:
+                    shortest_paths[(src,dst)] = length[src][dst]
+
+    return shortest_paths
+
+def one_hop_shortest_path(g):
+    shortest_paths = {}
+    
+    
 # def bipartize(g,mode):
 #     bipartite_graph = nx.Graph()
 #     layers = get_layer_list(g)
