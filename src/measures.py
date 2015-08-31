@@ -8,6 +8,7 @@ import itertools
 import networkx as nx
 from networkx.algorithms import bipartite
 
+layer_prefix = 'Layer_'
 # Add nodes that in gref to g.
 # This function will modify g but not gref.
 def fill_nodes(gref,g):
@@ -182,7 +183,7 @@ def get_layer_list(g):
 def bipartize(g,mode):
     bipartite_graph = nx.Graph()
     layers = get_layer_list(g)
-    prefix = lambda x: 'Carrier_'+ str(x)
+    prefix = lambda x: layer_prefix + str(x)
     layer_names = map(prefix,layers)
     bipartite_graph.add_nodes_from(layer_names,bipartite = 0)
     if isinstance(mode,basestring):
@@ -213,6 +214,25 @@ def bipartite_sets(bg):
     bottom = set(bg) - top
     return (top,bottom)
 
+def reconstruct_from_bipartite(bg):
+    top,bottom = bipartite_sets(bg)
+    mg = nx.DiGraph()
+
+    remove_prefix = lambda x: x[len(layer_prefix):]
+    layers = map(remove_prefix,list(top))
+    mg.graph['layers'] = layers
+
+    for nodes in bottom:
+        mg.add_nodes_from(nodes)
+        source = nodes[0]
+        target = nodes[1]
+        mg.add_edge(source,target,weight={})
+        for layer in bg[nodes]:
+            layer = remove_prefix(layer)
+            mg[source][target]['weight'][layer] = 1.0
+
+    return mg
+    
 def all_pairs_shortest_paths(g,nl):
     shortest_paths = {}
     layers = get_layer_list(g)
@@ -233,9 +253,147 @@ def all_pairs_shortest_paths(g,nl):
 
     return shortest_paths
 
+def two_layer_one_way(mg,layers):
+    if len(layers) != 2:
+        raise "Can only handle 2 layers situation."
+    nodes_list = list(mg)
+    upper = layers[0]
+    lower = layers[1]
+    upper_nodes = ['Upper_'+x for x in nodes_list]
+    lower_nodes = ['Lower_'+x for x in nodes_list]
+
+    ng = nx.DiGraph()
+    ng.add_nodes_from(upper_nodes)
+    ng.add_nodes_from(lower_nodes)
+    for node in nodes_list:
+        ng.add_edge('Upper_'+node,'Lower_'+node)
+
+    for source,target in mg.edges():
+        if mg[source][target]['weight'].has_key(upper):
+            ng.add_edge('Upper_'+source,'Upper_'+target)
+        if mg[source][target]['weight'].has_key(lower):
+            ng.add_edge('Lower_'+source,'Lower_'+target)
+
+    return ng
+    
 def one_hop_shortest_path(g):
     shortest_paths = {}
-    
+    layers = get_layer_list(g)
+    nodes = g.nodes()
+    for pair in itertools.permutations(nodes,2):
+        shortest_paths[pair] = float('inf')
+
+    from aggregate import sub_layers
+    for subnet in itertools.combinations(layers,1):
+        sg = sub_layers(g,subnet)
+        length = nx.all_pairs_shortest_path_length(sg)
+        for src in length:
+            for dst in length[src]:
+                if src == dst:
+                    continue
+                if length[src][dst] < shortest_paths[(src,dst)]:
+                    shortest_paths[(src,dst)] = length[src][dst]
+        
+    for subnet in itertools.combinations(layers,2):
+        upper = subnet[0]
+        lower = subnet[1]
+        ng = two_layer_one_way(g,[upper,lower])
+        length = nx.all_pairs_shortest_path_length(ng)
+        for src in length:
+            for dst in length[src]:
+                #In the same layer.
+                if src[0] == dst[0]:
+                    continue
+                osrc = src[6:]
+                odst = dst[6:]
+                if osrc == odst:
+                    continue
+                # -1 for inter layer hop.
+                if length[src][dst]-1 < shortest_paths[(osrc,odst)]:
+                    shortest_paths[(osrc,odst)] = length[src][dst]-1
+
+        ng = two_layer_one_way(g,[lower,upper])
+        length = nx.all_pairs_shortest_path_length(ng)
+
+        for src in length:
+            for dst in length[src]:
+                #In the same layer.
+                if src[0] == dst[0]:
+                    continue
+                osrc = src[6:]
+                odst = dst[6:]
+                if osrc == odst:
+                    continue
+                # -1 for inter layer hop.
+                if length[src][dst]-1 < shortest_paths[(osrc,odst)]:
+                    shortest_paths[(osrc,odst)] = length[src][dst]-1
+
+    return shortest_paths
+
+def one_hop_shortest_path_combinations(g):
+    shortest_paths = {}
+    shortest_combinations = {}
+    layers = get_layer_list(g)
+    nodes = g.nodes()
+    for pair in itertools.permutations(nodes,2):
+        shortest_paths[pair] = float('inf')
+
+    from aggregate import sub_layers
+    for subnet in itertools.combinations(layers,1):
+        sg = sub_layers(g,subnet)
+        length = nx.all_pairs_shortest_path_length(sg)
+        for src in length:
+            for dst in length[src]:
+                if src == dst:
+                    continue
+                if length[src][dst] == shortest_paths[(src,dst)]:
+                    shortest_combinations[(src,dst)].append(subnet)
+                if length[src][dst] < shortest_paths[(src,dst)]:
+                    shortest_paths[(src,dst)] = length[src][dst]
+                    shortest_combinations[(src,dst)] = [subnet]
+        
+    for subnet in itertools.combinations(layers,2):
+        upper = subnet[0]
+        lower = subnet[1]
+        ng = two_layer_one_way(g,[upper,lower])
+        length = nx.all_pairs_shortest_path_length(ng)
+        for src in length:
+            for dst in length[src]:
+                #In the same layer.
+                if src[0] == dst[0]:
+                    continue
+                osrc = src[6:]
+                odst = dst[6:]
+                if osrc == odst:
+                    continue
+                # -1 for inter layer hop.
+                if length[src][dst]-1 == shortest_paths[(osrc,odst)]:
+                    shortest_combinations[(osrc,odst)].append(subnet)
+                if length[src][dst]-1 < shortest_paths[(osrc,odst)]:
+                    shortest_paths[(osrc,odst)] = length[src][dst]-1
+                    shortest_combinations[(osrc,odst)] = [subnet]
+
+        ng = two_layer_one_way(g,[lower,upper])
+        length = nx.all_pairs_shortest_path_length(ng)
+
+        for src in length:
+            for dst in length[src]:
+                #In the same layer.
+                if src[0] == dst[0]:
+                    continue
+                osrc = src[6:]
+                odst = dst[6:]
+                if osrc == odst:
+                    continue
+                # -1 for inter layer hop.
+                if length[src][dst]-1 == shortest_paths[(osrc,odst)]:
+                    shortest_combinations[(osrc,odst)].append(subnet)
+                if length[src][dst]-1 < shortest_paths[(osrc,odst)]:
+                    shortest_paths[(osrc,odst)] = length[src][dst]-1
+                    shortest_combinations[(osrc,odst)] = [subnet]
+
+    return shortest_combinations
+
     
 # def bipartize(g,mode):
 #     bipartite_graph = nx.Graph()

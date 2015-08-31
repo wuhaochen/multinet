@@ -20,7 +20,10 @@ def sub_layers(og,layers):
         for key in layers:
             if key in g[source][target]['weight']:
                 new_weight[key] = g[source][target]['weight'][key]
-        g[source][target]['weight'] = new_weight
+        if len(new_weight) == 0:
+            g.remove_edge(source,target)
+        else:
+            g[source][target]['weight'] = new_weight
     g.graph['layers'] = list(layers) 
     return g
 

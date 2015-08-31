@@ -11,7 +11,7 @@ class MultiplexGraph(nx.DiGraph):
 #    1.Accept an index dictionary and a vector of one csv line as its parameter.
 #    2.Return True when the record should be included in the graph.
 #  weight_func should be a function similiar to filter_func and return the weight.
-def graph_from_csv(file_name,filter_func,weight_func,multi_layer=False,layer_s='',ow='ORIGIN',dw='DEST'):
+def graph_from_csv(file_name,filter_func,weight_func,multi_layer=False,layer_s='',ow='ORIGIN',dw='DEST',csv_style=''):
     index_dict = {}
     g = nx.DiGraph()
     g.graph['layers'] = []
@@ -27,7 +27,10 @@ def graph_from_csv(file_name,filter_func,weight_func,multi_layer=False,layer_s='
         layer_func = layer_s
         
     with open(file_name) as netfile:
-        netreader = csv.reader(netfile,delimiter=',',quotechar='\"',quoting=csv.QUOTE_NONNUMERIC)
+        if csv_style == 'N':
+            netreader = csv.reader(netfile,delimiter=',',quotechar='\"')
+        else:
+            netreader = csv.reader(netfile,delimiter=',',quotechar='\"',quoting=csv.QUOTE_NONNUMERIC)
         index_line = netreader.next()
 
         index = 0

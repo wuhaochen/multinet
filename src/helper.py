@@ -11,6 +11,7 @@ import networkx as nx
 
 from main import default_path
 from main import comtrade_path
+from main import openflight_path
 
 def g_katrina():
     airfile = default_path + 'T2005.csv'
@@ -47,6 +48,12 @@ def mg_all_by_year(year):
     filt = filters.cargo_filter()
     weightf = weight.weight_from_string('DEPARTURES_PERFORMED')
     return multinet.graph_from_csv(airfile,filt,weightf,True,'CARRIER')
+
+def mg_openflight():
+    airfile = openflight_path + 'routes.dat'
+    filt = lambda x,y:True
+    weightf = lambda x,y:1
+    return multinet.graph_from_csv(airfile,filt,weightf,True,'CARRIER',csv_style='N')
     
 def mg_by_year_comtrade(year):
     comfile = comtrade_path + 'C' + str(year) + '.csv'
