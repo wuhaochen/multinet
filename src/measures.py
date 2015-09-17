@@ -442,7 +442,7 @@ def attach_focus(bg,weighted=True):
             if weighted:
                 pk += [bg[n][neighbor]['weight']]
             else:
-                pk += 1.0
+                pk += [1.0]
             qk += [bg.node[neighbor]['concentration']]
             
         # The following two lines get rid of unwanted normalization of qk by entropy function
