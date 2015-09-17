@@ -180,7 +180,7 @@ def sub_layer(og,layer):
 def get_layer_list(g):
     return g.graph['layers']
     
-def bipartize(g,mode):
+def bipartize(g,mode,weighted=True):
     bipartite_graph = nx.Graph()
     layers = get_layer_list(g)
     prefix = lambda x: layer_prefix + str(x)
@@ -193,7 +193,10 @@ def bipartize(g,mode):
             for layer in layers:
                 sg = sub_layer(g,layer)
                 for node in sg.nodes():
-                    w = sg.degree(node,weight='weight')
+                    if weighted:
+                        w = sg.degree(node,weight='weight')
+                    else:
+                        w = sg.degree(node)
                     if w > 0:
                         bipartite_graph.add_edge(prefix(layer),node,weight=w)
         elif mstr in set(['edges','edge','arcs','arc','e','a']):
@@ -201,7 +204,11 @@ def bipartize(g,mode):
             for source,target in g.edges():
                 layers = g[source][target]['weight']
                 for layer in layers:
-                    bipartite_graph.add_edge(prefix(layer),(source,target),weight=layers[layer])
+                    if weighted:
+                        w = layers[layer]
+                    else:
+                        w = 1.0
+                    bipartite_graph.add_edge(prefix(layer),(source,target),weight=w)
                     
         else:
             raise "Mode does not exist!"
@@ -417,20 +424,14 @@ def one_hop_shortest_path_combinations(g):
 
     return shortest_combinations
 
-def attach_focus(bg,weighted=True):
+def attach_focus(bg):
     '''
     Given a bipartite network, calculating the focus of the nodes.
     '''
-    if weighted:
-        A = sum(bg[source][target]['weight'] for source,target in bg.edges())
-    else:
-        A = bg.number_of_edges()
-
+    A = sum(bg[source][target]['weight'] for source,target in bg.edges())
+    
     for n in bg.nodes():
-        if weighted:
-            bg.node[n]['concentration'] = bg.degree(n,'weight')/A
-        else:
-            bg.node[n]['concentration'] = bg.degree(n)/A
+        bg.node[n]['concentration'] = bg.degree(n,'weight')/A
 
     from scipy.stats import entropy
     from math import log
@@ -439,10 +440,7 @@ def attach_focus(bg,weighted=True):
         pk = []
         qk = []
         for neighbor in bg.neighbors(n):
-            if weighted:
-                pk += [bg[n][neighbor]['weight']]
-            else:
-                pk += [1.0]
+            pk += [bg[n][neighbor]['weight']]
             qk += [bg.node[neighbor]['concentration']]
             
         # The following two lines get rid of unwanted normalization of qk by entropy function
