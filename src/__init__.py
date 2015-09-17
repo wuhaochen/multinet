@@ -1,10 +1,8 @@
 #!/usr/bin/python
 
-working_path = '/home/hcwu/work/multinet'
-
-import os
-
-os.chdir(working_path)
+#working_path = '/home/hcwu/work/multinet'
+#import os
+#os.chdir(working_path)
 
 from multinet import *
 from filters import *

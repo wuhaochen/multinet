@@ -206,7 +206,7 @@ def bipartize(g,mode):
         else:
             raise "Mode does not exist!"
     else:
-        raise "Mode does not exist!"
+        raise "Mode must be string!"
     return bipartite_graph
 
 def bipartite_sets(bg):
@@ -232,7 +232,30 @@ def reconstruct_from_bipartite(bg):
             mg[source][target]['weight'][layer] = 1.0
 
     return mg
-    
+
+def multiplex_configuration(mg):
+    bg = bipartize(mg,'e')
+    top,bottom = bipartite_sets(bg)
+
+    top = list(top)
+    bottom = list(bottom)
+
+    degree_getter = lambda x: bg.degree(x)
+    dtop = map(degree_getter,top)
+    dbottom = map(degree_getter,bottom)
+
+    rbg = nx.bipartite_configuration_model(dtop,dbottom,create_using=nx.Graph())
+    rtop,rbottom = bipartite_sets(rbg)
+
+    keys = list(rtop)+list(rbottom)
+    values = list(top)+list(bottom)
+    mapping = dict(zip(keys,values))
+
+    nrbg = nx.relabel_nodes(rbg,mapping)
+    nmg = reconstruct_from_bipartite(nrbg)
+
+    return nmg
+
 def all_pairs_shortest_paths(g,nl):
     shortest_paths = {}
     layers = get_layer_list(g)
@@ -394,42 +417,20 @@ def one_hop_shortest_path_combinations(g):
 
     return shortest_combinations
 
-    
-# def bipartize(g,mode):
-#     bipartite_graph = nx.Graph()
-#     layers = get_layer_list(g)
-#     bipartite_graph.add_nodes_from(layers,bipartite = 0)
-#     if isinstance(mode,basestring):
-#         mstr = mode.lower()
-#         if mstr in set(['nodes','node','vertices','vertex','n','v']):
-#             bipartite_graph.add_nodes_from(g,bipartite = 1)
-#             for layer in layers:
-#                 sg = sub_layer(g,layer)
-#                 for node in sg.nodes():
-#                     w = sg.degree(node,weight='weight')
-#                     if w > 0:
-#                         bipartite_graph.add_edge(layer,node,weight=w)
-#         elif mstr in set(['edges','edge','arcs','arc','e','a']):
-#             bipartite_graph.add_nodes_from(g.edges(),bipartite = 1)
-#             for layer in layers:
-#                 sg = sub_layer(g,layer)
-#                 for source,target in sg.edges():
-#                     edge = sg[source][target]
-#                     bipartite_graph.add_edge(layer,(source,target),weight=edge['weight'])
-#         else:
-#             raise "Mode does not exist!"
-#     else:
-#         raise "Mode does not exist!"
-#     return bipartite_graph
-    
-def attach_focus(bg):
+def attach_focus(bg,weighted=True):
     '''
     Given a bipartite network, calculating the focus of the nodes.
     '''
-    A = sum(bg[source][target]['weight'] for source,target in bg.edges())
+    if weighted:
+        A = sum(bg[source][target]['weight'] for source,target in bg.edges())
+    else:
+        A = bg.number_of_edges()
 
     for n in bg.nodes():
-        bg.node[n]['concentration'] = bg.degree(n,'weight')/A
+        if weighted:
+            bg.node[n]['concentration'] = bg.degree(n,'weight')/A
+        else:
+            bg.node[n]['concentration'] = bg.degree(n)/A
 
     from scipy.stats import entropy
     from math import log
