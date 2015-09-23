@@ -240,7 +240,7 @@ def reconstruct_from_bipartite(bg):
 
     return mg
 
-def multiplex_configuration(mg):
+def multiplex_configuration(mg,seed=None):
     bg = bipartize(mg,'e')
     top,bottom = bipartite_sets(bg)
 
@@ -251,7 +251,7 @@ def multiplex_configuration(mg):
     dtop = map(degree_getter,top)
     dbottom = map(degree_getter,bottom)
 
-    rbg = nx.bipartite_configuration_model(dtop,dbottom,create_using=nx.Graph())
+    rbg = nx.bipartite_configuration_model(dtop,dbottom,create_using=nx.Graph(),seed=seed)
     rtop,rbottom = bipartite_sets(rbg)
 
     keys = list(rtop)+list(rbottom)
