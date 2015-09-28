@@ -55,12 +55,12 @@ def mg_openflight():
     weightf = lambda x,y:1
     return multinet.graph_from_csv(airfile,filt,weightf,True,'CARRIER',csv_style='N')
     
-def mg_by_year_comtrade(year):
+def mg_by_year_comtrade(year,aggregation=0):
     comfile = comtrade_path + 'C' + str(year) + '.csv'
     filt = lambda x,y:True
     weightf = weight.weight_from_string('v')
-    layerf = layer.layer_from_string('hs6')
-    return multinet.graph_from_csv(comfile,filt,weightf,True,'hs6',ow='i',dw='j')
+    layerf = layer.layer_comtrade(aggregation)
+    return multinet.graph_from_csv(comfile,filt,weightf,True,layerf,ow='i',dw='j')
 
 def subgraph_edges(airfile,l):
     filt_r = filters.regular_filter()

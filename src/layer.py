@@ -10,5 +10,5 @@ def layer_comtrade(aggregation=0):
     def layer_func(index_dict,line):
         l = index_dict['hs6']
         code = line[l]
-        return code/(10**aggregation)
+        return str(int(code/(10**aggregation)))
     return layer_func
