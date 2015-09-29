@@ -167,7 +167,7 @@ def gini(g):
     
     return diff_sum/norm
 
-def sub_layer(og,layer):
+def sub_layer(og,layer,keep_isolated=True):
     g = nx.DiGraph()
     g.add_nodes_from(og)
     for source,target in og.edges():
@@ -175,6 +175,8 @@ def sub_layer(og,layer):
         if layer in edge['weight']:
             w = edge['weight'][layer]
             g.add_edge(source,target,weight=w)
+    if not keep_isolated:
+        g.remove_nodes_from(nx.isolates(g))
     return g
 
 def get_layer_list(g):
@@ -263,6 +265,49 @@ def multiplex_configuration(mg,seed=None):
 
     return nmg
 
+def random_int_list(length,a=0,b=1000000,seed=None):
+    import random
+    random.seed(seed)
+    l = []
+    for i in range(length):
+        l.append(random.randint(a,b))
+    return l
+    
+def multiplex_configuration_independent(mg,seed=None):
+    layers = get_layer_list(mg)
+    nl = len(layers)
+
+    seeds = random_int_list(nl,seed=seed)
+    
+    nmg = nx.DiGraph()
+    for layer in layers:
+        sg = sub_layer(mg,layer,keep_isolated=False)
+        nodes = sg.in_degree().keys()
+        in_degs = sg.in_degree().values()
+        out_degs = sg.out_degree().values()
+        rsg = nx.directed_configuration_model(in_degs,out_degs,create_using=nx.DiGraph(),seed=seeds.pop())
+        rnodes = rsg.nodes()
+        mapping = dict(zip(rnodes,nodes))
+        nrsg = nx.relabel_nodes(rsg,mapping)
+        add_layer(nmg,nrsg,layer)
+
+    return nmg
+
+def add_layer(mg,sg,layer):
+    mg.add_nodes_from(sg)
+    if not mg.graph.has_key('layers'):
+        mg.graph['layers'] = []
+    mg.graph['layers'].append(layer)
+    for source,target in sg.edges():
+        mg.add_edge(source,target)
+        if not mg[source][target].has_key('weight'):
+            mg[source][target]['weight'] = {}
+        if sg[source][target].has_key('weight'):
+            weight = sg[source][target]['weight']
+        else:
+            weight = 1.0
+        mg[source][target]['weight'][layer] = weight
+    
 def all_pairs_shortest_paths(g,nl):
     shortest_paths = {}
     layers = get_layer_list(g)
