@@ -3,28 +3,28 @@
 import networkx as nx
 import csv
 
-class MultiplexGraph(nx.DiGraph):
-    layers = []
+from Multinet import Multinet
+import util
 
 #@param:
 #  filter_func should be a function that:
 #    1.Accept an index dictionary and a vector of one csv line as its parameter.
 #    2.Return True when the record should be included in the graph.
 #  weight_func should be a function similiar to filter_func and return the weight.
-def graph_from_csv(file_name,filter_func,weight_func,multi_layer=False,layer_s='',ow='ORIGIN',dw='DEST',csv_style=''):
+def multinet_from_csv(
+        file_name,
+        filter_func,weight_func,layer_func,
+        ow='ORIGIN',dw='DEST',
+        csv_style=''):
+    
     index_dict = {}
-    g = nx.DiGraph()
-    g.graph['layers'] = []
+    mg = Multinet()
 
     if type(weight_func) == str:
-        import weight
-        weight_func = weight.weight_from_string(weight_func)
+        weight_func = util.weight_from_string(weight_func)
 
-    if type(layer_s) == str:
-        import layer
-        layer_func = layer.layer_from_string(layer_s)
-    else:
-        layer_func = layer_s
+    if type(layer_func) == str:
+        layer_func = util.layer_from_string(layer_func)
         
     with open(file_name) as netfile:
         if csv_style == 'N':
@@ -48,26 +48,12 @@ def graph_from_csv(file_name,filter_func,weight_func,multi_layer=False,layer_s='
             origin = line[origin_index]
             dest = line[dest_index]
             
-            g.add_node(origin)
-            g.add_node(dest)
-
-            g.add_edge(origin,dest)
-
-            if not g[origin][dest].has_key('weight'):
-                if multi_layer:
-                    g[origin][dest]['weight'] = dict()
-                else:
-                    g[origin][dest]['weight'] = 0.0
+            layer = layer_func(index_dict,line)
+            weight = weight_func(index_dict,line)
             
-            if multi_layer:
-                layer = layer_func(index_dict,line)
-                if not layer in g.graph['layers']:
-                    g.graph['layers'].append(layer)
-                if not g[origin][dest]['weight'].has_key(layer):
-                    g[origin][dest]['weight'][layer] = 0.0
-                g[origin][dest]['weight'][layer] += weight_func(index_dict,line)
-            else:
-                g[origin][dest]['weight'] += weight_func(index_dict,line)
+            mg.add_node(origin)
+            mg.add_node(dest)
 
-    return g
+            mg.aggregate_edge(origin,dest,layer,weight)
 
+    return mg
