@@ -1,15 +1,4 @@
 #!/usr/bin/python
 
-#working_path = '/home/hcwu/work/multinet'
-#import os
-#os.chdir(working_path)
+from Multinet import *
 
-from multinet import *
-from filters import *
-from weight import *
-from helper import *
-from count import *
-from aggregate import *
-from measures import *
-
-#from main import *
