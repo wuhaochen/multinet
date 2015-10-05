@@ -196,4 +196,26 @@ class Multinet(nx.DiGraph):
             if new_weight != 0:
                 g[u][v]['multiplex'][new_name] = new_weight
 
-    
+    def add_layer(self,layer_graph,layer_name):
+        """Add a new layer from a DiGraph.
+        The existing edge will be replaced by the new one.
+
+        Parameters:
+        -----------
+        layer_graph: nx.DiGraph
+          The layers to be added.
+
+        layer_name: str
+          The name of the new layer.
+        
+        
+        """
+        self.add_nodes_from(layer_graph)
+        self._add_layer(layer_name)
+
+        for u,v in layer_graph.edges():
+            if layer_graph[u][v].has_key('weight'):
+                weight = layer_graph[u][v]['weight']
+            else:
+                weight = 1.0
+            self.add_edge(u,v,layer_name,weight)
