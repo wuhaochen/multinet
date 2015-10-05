@@ -9,26 +9,6 @@ import networkx as nx
 from networkx.algorithms import bipartite
 
 layer_prefix = 'Layer_'
-# Add nodes that in gref to g.
-# This function will modify g but not gref.
-def fill_nodes(gref,g):
-    for node in gref.vs:
-        try:
-            g.vs.find(node['name'])
-        except:
-            g.add_vertex(node['name'])
-
-# Add edge that in gref to g.
-# This function will modify g but not gref.
-def fill_edges(gref,g,w=0):
-    fill_nodes(gref,g)
-    for edge in gref.es:
-        source = g.vs.find(gref.vs[edge.source]['name'])
-        target = g.vs.find(gref.vs[edge.target]['name'])
-        try:
-            eid = g.get_eid(source.index,target.index)
-        except:
-            g.add_edge(source,target,weight=w)
 
 def corresponding_edge_list(g1,g2):
     weight_list_1 = []
