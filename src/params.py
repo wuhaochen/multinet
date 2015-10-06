@@ -1,4 +1,7 @@
-#!/usr/bin/python
+"""
+This file contains some useful parameters that very specific.
+They are only used by examples and will be removed later.
+"""
 
 default_path = '/home/hcwu/data/transtat/'
 comtrade_path = '/home/hcwu/data/comtrade/'
