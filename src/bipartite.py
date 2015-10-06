@@ -1,3 +1,6 @@
+"""Project a multiplex network to a bipartite graph.
+"""
+
 import networkx as nx
 
 from Multinet import Multinet
@@ -7,10 +10,32 @@ _layer_prefix = 'Layer_'
 _prefix = lambda x: layer_prefix + str(x)
 
 def _add_layer_nodes(bg,layers):
+    """Add nodes represents the layers in multiplex network to the bipartite graph
+
+    Parameters:
+    -----------
+    bg: nx.Graph
+      Bipartite graph to operate on.
+
+    layers: list
+      A list of layers.
+
+    """
     layer_names = map(_prefix,layers)
     bg.add_nodes_from(layer_names, bipartite=0)
     
 def bipartize_by_node(mg, weighted=True):
+    """Project a Multinet to a bipartite graph using layer-node view.
+
+    Parameters:
+    -----------
+    mg: Multinet
+      Mulitplex network to project.
+
+    weighted: bool
+      Whether or not use the weight information in the multiplex network.
+
+    """
     bipartite_graph = nx.Graph()
     _add_layer_nodes(bg,mg.layers())
     
@@ -28,6 +53,17 @@ def bipartize_by_node(mg, weighted=True):
     return bipartite_graph
     
 def bipartize_by_edge(mg, weighted=True):
+    """Project a Multinet to a bipartite graph using layer-edge view.
+
+    Parameters:
+    -----------
+    mg: Multinet
+      Mulitplex network to project.
+
+    weighted: bool
+      Whether or not use the weight information in the multiplex network.
+
+    """
     bipartite_graph = nx.Graph()
     _add_layer_nodes(bg,mg.layers())
     
@@ -44,25 +80,28 @@ def bipartize_by_edge(mg, weighted=True):
     return bipartite_graph
 
 def bipartize(mg,mode,weighted=True):
-    bipartite_graph = nx.Graph()
-    bipartite_graph.add_nodes_from(layer_names,bipartite = 0)
-    if isinstance(mode,basestring):
-        mstr = mode.lower()
-        if mstr in set(['nodes','node','vertices','vertex','n','v']):
-            return bipartize_by_node(mg,weighted)
-        elif mstr in set(['edges','edge','arcs','arc','e','a']):
-            return bipartize_by_edge(mg,weighted)
-        else:
-            raise Exception("Mode does not exist!")
-    else:
-        raise Exception("Mode must be string!")
-
 def bipartite_sets(bg):
+    """Return two nodes sets of a bipartite graph.
+
+    Parameters:
+    -----------
+    bg: nx.Graph
+      Bipartite graph to operate on.
+
+    """
     top = set(n for n,d in bg.nodes(data=True) if d['bipartite']==0)
     bottom = set(bg) - top
     return (top,bottom)
 
 def reconstruct_from_bipartite(bg):
+    """Reconstruct a multiplex network from a layer-edge bipartite graph.
+
+    Parameters:
+    -----------
+    bg: nx.Graph
+      A layer-edge bipartite graph that used to reconstruct the multiplex network.
+
+    """
     top,bottom = bipartite_sets(bg)
     mg = Multinet()
 
