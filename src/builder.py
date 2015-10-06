@@ -1,5 +1,3 @@
-#!/usr/bin/python
-
 import networkx as nx
 import csv
 
@@ -13,10 +11,21 @@ import util
 #  weight_func should be a function similiar to filter_func and return the weight.
 def multinet_from_csv(
         file_name,
-        filter_func,weight_func,layer_func,
+        filter_func=util.default_filter,
+        weight_func=util.default_weight,
+        layer_func=util.default_layer,
         ow='ORIGIN',dw='DEST',
         csv_style=''):
+    """Build Multinet from csv files.
+
+    Parameters:
+    -----------
+    filename: str
+      The path to csv file.
+
+    filter_func: func 
     
+    """
     index_dict = {}
     mg = Multinet()
 

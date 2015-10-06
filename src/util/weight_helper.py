@@ -1,4 +1,4 @@
-#!/usr/bin/python
+default_weight = lambda x,y:1.0
 
 def weight_from_string(weight_s):
     def weight_func(index_dict,line):

@@ -1,4 +1,4 @@
-#!/usr/bin/python
+default_layer = lambda x,y:"Default_layer"
 
 def layer_from_string(layer_s):
     def layer_func(index_dict,line):

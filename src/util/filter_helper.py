@@ -3,6 +3,8 @@
 # This file contains a series of filter builders that can build filters which are used as parameter of the build_airgraph function.
 
 # Return a filter filt the line satisfies all the simple conditions.
+default_filter = lambda x,y:True
+
 def build_and_filter(**condition):
     def filter_func(index_dict,line):
         for key in condition:
