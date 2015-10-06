@@ -1,8 +1,14 @@
-#!/usr/bin/python
+"""Utility function to build a filter used by builder.
 
-# This file contains a series of filter builders that can build filters which are used as parameter of the build_airgraph function.
-
-# Return a filter filt the line satisfies all the simple conditions.
+filter_func should take two arguments.
+  The first argument is a dict describe the csv file.
+    The key of the dict is field name for csv file.
+    The value of the dict is field index for csv file.
+  The second argument is a list represent a line in csv file.
+filter_func should return a bool.
+  True if this line is going to be used by the builder.
+  False if not.
+"""
 default_filter = lambda x,y:True
 
 def build_and_filter(**condition):

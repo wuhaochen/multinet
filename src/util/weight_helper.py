@@ -1,3 +1,12 @@
+"""Utility function to build a weight_func used by builder.
+
+weight_func should take two arguments.
+  The first argument is a dict describe the csv file.
+    The key of the dict is field name for csv file.
+    The value of the dict is field index for csv file.
+  The second argument is a list represent a line in csv file.
+weight_func should return a number as the weight of the edge.
+"""
 default_weight = lambda x,y:1.0
 
 def weight_from_string(weight_s):

@@ -1,14 +1,12 @@
+"""Build Multinet instance from csv file.
+
+"""
 import networkx as nx
 import csv
 
 from Multinet import Multinet
 import util
 
-#@param:
-#  filter_func should be a function that:
-#    1.Accept an index dictionary and a vector of one csv line as its parameter.
-#    2.Return True when the record should be included in the graph.
-#  weight_func should be a function similiar to filter_func and return the weight.
 def multinet_from_csv(
         file_name,
         filter_func=util.default_filter,
@@ -23,7 +21,20 @@ def multinet_from_csv(
     filename: str
       The path to csv file.
 
-    filter_func: func 
+    filter_func: func
+      A function takes line description and a line from the csv file and return a bool. See util/filter_helper for detail.
+
+    weight_func: func or str
+      A function takes line description and a line from the csv file and return a number. See util/weight_helper for detail.
+
+    layer_func: func or str
+      A function takes line description and a line from the csv file and return a str. See util/layer_helper for detail.
+
+    ow, dw: str
+      The key to get nodes name.
+
+    csv_style: str
+      style of the csv file.
     
     """
     index_dict = {}

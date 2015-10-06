@@ -1,3 +1,13 @@
+"""Utility function to build a layer_func used by builder.
+
+layer_func should take two arguments.
+  The first argument is a dict describe the csv file.
+    The key of the dict is field name for csv file.
+    The value of the dict is field index for csv file.
+  The second argument is a list represent a line in csv file.
+layer_func should return a str as the layer name.
+"""
+
 default_layer = lambda x,y:"Default_layer"
 
 def layer_from_string(layer_s):
