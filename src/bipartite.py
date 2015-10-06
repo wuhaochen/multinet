@@ -80,6 +80,31 @@ def bipartize_by_edge(mg, weighted=True):
     return bipartite_graph
 
 def bipartize(mg,mode,weighted=True):
+    """Project a Multinet to a bipartite graph using layer-edge view.
+
+    Parameters:
+    -----------
+    mg: Multinet
+      Mulitplex network to project.
+
+    mode: str
+      Whether using layer-node view or layer-edge view.
+
+    weighted: bool
+      Whether or not use the weight information in the multiplex network.
+
+    """
+    if isinstance(mode,basestring):
+        mstr = mode.lower()
+        if mstr in set(['nodes','node','vertices','vertex','n','v']):
+            return bipartize_by_node(mg,weighted)
+        elif mstr in set(['edges','edge','arcs','arc','e','a']):
+            return bipartize_by_edge(mg,weighted)
+        else:
+            raise Exception("Mode does not exist!")
+    else:
+        raise Exception("Mode must be string!")
+        
 def bipartite_sets(bg):
     """Return two nodes sets of a bipartite graph.
 
