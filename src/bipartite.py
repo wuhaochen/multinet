@@ -39,7 +39,7 @@ def bipartize_by_node(mg, weighted=True):
 
     """
     bipartite_graph = nx.Graph()
-    _add_layer_nodes(bg,mg.layers())
+    _add_layer_nodes(bipartite_graph,mg.layers())
     
     bipartite_graph.add_nodes_from(mg,bipartite = 1)
     for layer in mg.layers():
@@ -67,7 +67,7 @@ def bipartize_by_edge(mg, weighted=True):
 
     """
     bipartite_graph = nx.Graph()
-    _add_layer_nodes(bg,mg.layers())
+    _add_layer_nodes(bipartite_graph,mg.layers())
     
     bipartite_graph.add_nodes_from(mg.edges(),bipartite = 1)
     for u,v in mg.edges():
