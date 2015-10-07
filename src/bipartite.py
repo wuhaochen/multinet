@@ -5,9 +5,11 @@ import networkx as nx
 
 from Multinet import Multinet
 
+#These following lines provide utilities to add and remove prefix to the layer node. In case of a node might have same name as a layer.
 _layer_prefix = 'Layer_'
 
-_prefix = lambda x: layer_prefix + str(x)
+_prefix = lambda x: _layer_prefix + str(x)
+_remove_prefix = lambda x: x[len(_layer_prefix):]
 
 def _add_layer_nodes(bg,layers):
     """Add nodes represents the layers in multiplex network to the bipartite graph
@@ -130,15 +132,14 @@ def reconstruct_from_bipartite(bg):
     top,bottom = bipartite_sets(bg)
     mg = Multinet()
 
-    remove_prefix = lambda x: x[len(_layer_prefix):]
-    layers = map(remove_prefix,list(top))
+    layers = map(_remove_prefix,list(top))
 
     for nodes in bottom:
         mg.add_nodes_from(nodes)
         u = nodes[0]
         v = nodes[1]
         for layer in bg[nodes]:
-            layer = remove_prefix(layer)
+            layer = _remove_prefix(layer)
             mg.add_edge(u,v,layer)
 
     return mg
