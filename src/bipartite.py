@@ -156,3 +156,6 @@ def attach_importance(bg):
         common = set(bg[u]) & set(bg[v])
         for node in common:
             bg.node[node]['imp'] += 1/len(common)
+
+    for node in bg.nodes():
+        bg.node[node]['nimp'] = bg.node[node]['imp']/bg.degree(node)

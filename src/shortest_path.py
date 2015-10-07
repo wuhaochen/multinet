@@ -59,3 +59,21 @@ def k_layer_reachability(mg,k):
     total = sum(lc.values())
 
     return 1-(unreachable/total)
+
+def k_layer_diameter(mg,k):
+    """k-layer diameter
+
+    Parameters:
+    -----------
+    mg: Multinet
+      Multiplex network to calculate.
+
+    k: int
+      Number of layers allowed to use.
+
+    """
+    lengths = all_pairs_k_layer_shortest_path_length(mg,k)
+    from collections import Counter
+    lc = Counter(lengths.values())
+    reachable = filter(lambda x:x<float('inf'),lc.keys())
+    return max(reachable)

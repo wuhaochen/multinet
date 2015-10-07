@@ -239,5 +239,4 @@ class Multinet(nx.DiGraph):
 
         """
         to_remove = self.empty_layers()
-        for layer in to_remove:
-            self._remove_layer(layer)
+        map(self._remove_layer,to_remove)

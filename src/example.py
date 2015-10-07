@@ -11,7 +11,7 @@ def mg_by_year(year):
     layerf = util.layer_from_string('CARRIER')
     return builder.multinet_from_csv(airfile,filt,weightf,'CARRIER')
 
-def trimed_mg_by_year(year):
+def trimmed_mg_by_year(year):
     mg = mg_by_year(year)
     c = list(nx.strongly_connected_components(mg))
     c = sorted(c,key=len,reverse=True)
