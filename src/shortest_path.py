@@ -1,8 +1,9 @@
 """Functions related to shortest paths.
 
 """
-import itertools
 from __future__ import division
+
+import itertools
 
 def all_pairs_k_layer_shortest_path_length(mg,k):
     """Calculate all the k-layer shortest path lengths.
@@ -27,7 +28,7 @@ def all_pairs_k_layer_shortest_path_length(mg,k):
     for pair in itertools.permutations(nodes,2):
         shortest_path_lengths[pair] = float('inf')
     for subnet in itertools.combinations(layers,k):
-        sg = sub_layers(g,subnet)
+        sg = mg.sub_layers(subnet)
         length = nx.all_pairs_shortest_path_length(sg)
         for src in length:
             for dst in length[src]:
@@ -50,7 +51,7 @@ def k_layer_reachability(mg,k):
       Number of layers allowed to use.
 
     """
-    lengths = all_pairs_shortest_path_length(mg,k)
+    lengths = all_pairs_k_layer_shortest_path_length(mg,k)
     from collections import Counter
     lc = Counter(lengths.values())
     unreachable = lc[float('inf')]

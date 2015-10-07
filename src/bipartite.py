@@ -1,5 +1,6 @@
 """Project a multiplex network to a bipartite graph.
 """
+from __future__ import division
 
 import networkx as nx
 
@@ -143,3 +144,15 @@ def reconstruct_from_bipartite(bg):
             mg.add_edge(u,v,layer)
 
     return mg
+
+def attach_importance(bg):
+    """New measure working in progress.
+    """
+    for node in bg.nodes():
+        bg.node[node]['imp'] = 0.0
+    
+    import itertools
+    for u,v in itertools.combinations(bg.nodes(),2):
+        common = set(bg[u]) & set(bg[v])
+        for node in common:
+            bg.node[node]['imp'] += 1/len(common)

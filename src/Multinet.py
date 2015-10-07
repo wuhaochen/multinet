@@ -220,7 +220,7 @@ class Multinet(nx.DiGraph):
                 weight = 1.0
             self.add_edge(u,v,layer_name,weight)
 
-    def empty_layer(self):
+    def empty_layers(self):
         """Return a list of all empty layers.
         
         """
@@ -232,3 +232,11 @@ class Multinet(nx.DiGraph):
                 nonempty.add(layer)
 
         return list(layers-nonempty)
+
+    def remove_empty_layers(self):
+        """Remove all empty layers.
+
+        """
+        to_remove = self.empty_layers()
+        for layer in to_remove:
+            self._remove_layer(layer)
