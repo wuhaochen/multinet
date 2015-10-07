@@ -124,7 +124,8 @@ class Multinet(nx.DiGraph):
         
         """
         layers = set(layers)&set(self.layers())
-        
+
+        import copy
         g = copy.deepcopy(self)
         for u,v in g.edges():
             new_weight = {}

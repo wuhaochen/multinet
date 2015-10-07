@@ -4,6 +4,7 @@
 from __future__ import division
 
 import itertools
+import networkx as nx
 
 def all_pairs_k_layer_shortest_path_length(mg,k):
     """Calculate all the k-layer shortest path lengths.
