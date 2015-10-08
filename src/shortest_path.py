@@ -76,4 +76,7 @@ def k_layer_diameter(mg,k):
     from collections import Counter
     lc = Counter(lengths.values())
     reachable = filter(lambda x:x<float('inf'),lc.keys())
-    return max(reachable)
+    if len(reachable) > 0:
+        return max(reachable)
+    else:
+        return 0
