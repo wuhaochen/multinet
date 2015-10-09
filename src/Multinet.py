@@ -240,3 +240,15 @@ class Multinet(nx.DiGraph):
         """
         to_remove = self.empty_layers()
         map(self._remove_layer,to_remove)
+
+    def remove_layer(self,layer):
+        """Remove one specific layer.
+
+        """
+        for u,v in self.edges():
+            if layer in self[u][v]['multiplex']:
+                self[u][v]['multiplex'].pop(layer)
+            if len(self[u][v]['multiplex']) == 0:
+                self.remove_edge(u,v)
+
+        self._remove_layer(layer)

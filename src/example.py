@@ -3,6 +3,7 @@ import builder
 import networkx as nx
 
 from params import default_path
+from params import openflight_path
 
 def mg_by_year(year):
     airfile = default_path + 'T' + str(year) + '.csv'
@@ -13,6 +14,19 @@ def mg_by_year(year):
 
 def trimmed_mg_by_year(year):
     mg = mg_by_year(year)
+    c = list(nx.strongly_connected_components(mg))
+    c = sorted(c,key=len,reverse=True)
+    to_remove = set(mg.nodes())-set(c[0])
+    mg.remove_nodes_from(to_remove)
+    mg.remove_empty_layers()
+    return mg
+
+def mg_openflight():
+    airfile = openflight_path + 'routes.dat'
+    return builder.multinet_from_csv(airfile,layer_func='CARRIER',csv_style='N')
+
+def trimmed_mg_openflight():
+    mg = mg_openflight()
     c = list(nx.strongly_connected_components(mg))
     c = sorted(c,key=len,reverse=True)
     to_remove = set(mg.nodes())-set(c[0])
