@@ -127,15 +127,17 @@ class Multinet(nx.DiGraph):
 
         import copy
         g = copy.deepcopy(self)
+        to_remove = []
         for u,v in g.edges():
             new_weight = {}
             for layer in layers:
                 if layer in g[u][v]['multiplex']:
                     new_weight[layer] = g[u][v]['multiplex'][layer]
             if len(new_weight) == 0:
-                g.remove_edge(u,v)
+                to_remove.append((u,v))
             else:
                 g[u][v]['multiplex'] = new_weight
+        g.remove_edges_from(to_remove)
         g.graph['layers'] = list(layers)
 
         if remove_isolates:
