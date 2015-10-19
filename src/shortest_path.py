@@ -28,6 +28,11 @@ def all_pairs_k_layer_shortest_path_length(mg,k):
     
     for pair in itertools.permutations(nodes,2):
         shortest_path_lengths[pair] = float('inf')
+
+    # syntax sugar to allow convenient operation.
+    if k<=0:
+        k = mg.number_of_layers()-k
+        
     for subnet in itertools.combinations(layers,k):
         sg = mg.sub_layers(subnet)
         length = nx.all_pairs_shortest_path_length(sg)
