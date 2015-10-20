@@ -176,7 +176,7 @@ class Multinet(nx.DiGraph):
         """
         g = nx.DiGraph()
         g.add_nodes_from(self)
-        for u.v in self.edges():
+        for u,v in self.edges():
             g.add_edge(u,v)
             g[u][v]['weight'] = sum(self[u][v]['multiplex'].values())
             g[u][v]['nlayer'] = len(self[u][v]['multiplex'])
