@@ -171,6 +171,18 @@ class Multinet(nx.DiGraph):
             g.remove_nodes_from(nx.isolates(g))
         return g
 
+    def aggregated(self):
+        """Return a new DiGraph instance that represents the aggregated network.
+        """
+        g = nx.DiGraph()
+        g.add_nodes_from(self)
+        for u.v in self.edges():
+            g.add_edge(u,v)
+            g[u][v]['weight'] = sum(self[u][v]['multiplex'].values())
+            g[u][v]['nlayer'] = len(self[u][v]['multiplex'])
+        return g
+        
+        
     def merge_layers(self, layers, new_name=None):
         """Merge layers together with new name.
 
