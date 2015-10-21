@@ -31,7 +31,7 @@ def all_pairs_k_layer_shortest_path_length(mg,k):
 
     # syntax sugar to allow convenient operation.
     if k<=0:
-        k = mg.number_of_layers()-k
+        k = mg.number_of_layers() + k
         
     for subnet in itertools.combinations(layers,k):
         sg = mg.sub_layers(subnet)
