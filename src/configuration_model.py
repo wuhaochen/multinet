@@ -92,7 +92,7 @@ def multiplex_configuration_independent(mg,seed=None):
 
     seeds = _random_int_list(nl,seed=seed)
     
-    nmg = nx.DiGraph()
+    nmg = Multinet()
     for layer in layers:
         sg = mg.sub_layer(layer,remove_isolates=True)
         nodes = sg.in_degree().keys()
