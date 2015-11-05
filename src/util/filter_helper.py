@@ -58,7 +58,7 @@ def combine_filters_not(filt):
     return lambda i,l:not filt(i,l)
 
 def build_either_in_filter(List):
-    return combine_filter_or(build_in_and_filter(ORIGIN=List),build_in_and_filter(DEST=List))
+    return combine_filters_or(build_in_and_filter(ORIGIN=List),build_in_and_filter(DEST=List))
 
 def build_both_in_filter(List):
     return build_in_and_filter(ORIGIN=List,DEST=List)
