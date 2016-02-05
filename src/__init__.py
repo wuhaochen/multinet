@@ -5,4 +5,3 @@ from configuration_model import *
 from shortest_path import *
 from l_core import *
 
-from example import *
