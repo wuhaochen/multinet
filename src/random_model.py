@@ -105,3 +105,42 @@ def multiplex_configuration_independent(mg,seed=None):
         nmg.add_layer(nrsg,layer)
 
     return nmg
+
+def multiplex_erdos_renyi(mg,seed=None,include_all=True):
+    """Return a Multinet such that each layer is an Erdos-Renyi network with same p as the original Multinet given.
+
+    Parameters
+    ----------
+    mg : Multinet
+      Multiplex network to be configured.
+
+    seed : object
+      Seed for the model.
+
+    Return
+    ------
+    A new Multinet instance.
+
+
+    """
+    layers = mg.layers()
+    nl = len(layers)
+
+    seeds = _random_int_list(nl,seed=seed)
+    
+    nmg = Multinet()
+    for layer in layers:
+        sg = mg.sub_layer(layer,remove_isolates=not include_all)
+        nodes = sg.nodes()
+        nnode = sg.number_of_nodes()
+        nedge = sg.number_of_edges()
+        p = float(nedge)/pow(nnode,2)
+        rsg = nx.erdos_renyi_graph(nnode,p,seed=seeds.pop(),directed=True)
+        rnodes = rsg.nodes()
+        mapping = dict(zip(rnodes,nodes))
+        nrsg = nx.relabel_nodes(rsg,mapping)
+        nmg.add_layer(nrsg,layer)
+
+    return nmg
+
+    
