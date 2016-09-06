@@ -266,3 +266,25 @@ class Multinet(nx.DiGraph):
                 self.remove_edge(u,v)
 
         self._remove_layer(layer)
+
+    def to_undirected(self):
+        """Temporary solution, transform Multinet to an undirected Graph object with layers and multiplex so that it can be used by the function in this package but it doesn't have all the feature as Multinet.
+        Run this method only after finishing all merge/sub_layers.
+
+        """
+        import copy
+        g = nx.Graph()
+        g.add_nodes_from(self.nodes())
+        g.graph['layers'] = self.layers()
+
+        for u,v in self.edges():
+            if not g.has_edge(u,v):
+                g.add_edge(u,v)
+                g[u][v]['multiplex'] = copy.deepcopy(self[u][v]['multiplex'])
+            else:
+                for key in self[u][v]['multiplex']:
+                    if not g[u][v]['multiplex'].has_key(key):
+                        g[u][v]['multiplex'][key] = 0.0
+                    g[u][v]['multiplex'][key] += self[u][v]['multiplex'][key]
+
+        return g
