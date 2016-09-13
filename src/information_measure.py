@@ -1,5 +1,6 @@
 import dit
 from collections import Counter
+from Multinet import Multinet
 
 def extract_count(g,layers):
     c = Counter()
@@ -33,11 +34,41 @@ def mutual_information(g,layers):
     else:
         raise Exception("Not implemented.")
 
-def intersect(mg1,mg2,method="Merge"):
-    pass
+def intersect(mgs,prefixs):
+    if len(mgs) != len(prefixs):
+        raise Exception("Length does not match.'")
+    if len(mgs) < 1:
+        return None
+    g = Multinet()
+    nodes = set(mgs[0].nodes())
+    for mg in mgs:
+        nodes &= set(mg.nodes())
+    g.add_nodes_from(nodes)
+    
+    for i,mg in enumerate(mgs):
+        for u,v in mg.edges():
+            if u in nodes and v in nodes:
+                for layer in mg[u][v]['multiplex']:
+                    g.add_edge(u,v,prefixs[i]+layer,mg[u][v]['multiplex'][layer])
+    return g
 
-def union(mg1,mg2,method="Merge"):
-    pass
+def union(mgs,prefixs):
+    if len(mgs) != len(prefixs):
+        raise Exception("Length does not match.'")
+    if len(mgs) < 1:
+        return None
+    g = Multinet()
+    nodes = set()
+    for mg in mgs:
+        nodes |= set(mg.nodes())
+    g.add_nodes_from(nodes)
+    
+    for i,mg in enumerate(mgs):
+        for u,v in mg.edges():
+            for layer in mg[u][v]['multiplex']:
+                g.add_edge(u,v,prefixs[i]+layer,mg[u][v]['multiplex'][layer])
+    return g
+
 
 def transfer_entropy(g1,g2,layers=None):
     if not layers:
