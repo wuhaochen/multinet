@@ -13,7 +13,7 @@ def multinet_from_csv(
         weight_func=util.default_weight,
         layer_func=util.default_layer,
         ow='ORIGIN',dw='DEST',
-        csv_style=''):
+        **csv_reader_argv):
     """Build Multinet from csv files.
 
     Parameters:
@@ -33,8 +33,8 @@ def multinet_from_csv(
     ow, dw: str
       The key to get nodes name.
 
-    csv_style: str
-      style of the csv file.
+    csv_reader_argv:
+      Arguments for internal csv reader. If not specified, use default settings. See Python csv module for detail.
     
     """
     index_dict = {}
@@ -47,10 +47,11 @@ def multinet_from_csv(
         layer_func = util.layer_from_string(layer_func)
         
     with open(file_name) as netfile:
-        if csv_style == 'N':
-            netreader = csv.reader(netfile,delimiter=',',quotechar='\"')
-        else:
+        if not csv_reader_argv:
             netreader = csv.reader(netfile,delimiter=',',quotechar='\"',quoting=csv.QUOTE_NONNUMERIC)
+        else:
+            netreader = csv.reader(netfile,**csv_reader_argv)
+
         index_line = netreader.next()
 
         index = 0
