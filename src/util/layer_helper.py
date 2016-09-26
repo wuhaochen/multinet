@@ -22,3 +22,10 @@ def layer_comtrade(aggregation=0):
         code = line[l]
         return str(int(code/(10**aggregation)))
     return layer_func
+
+def layer_icews(dlevel=2):
+    def layer_func(index_dict,line):
+        l = index_dict['CAMEO Code']
+        code = line[l]
+        return code[:dlevel]
+    return layer_func
