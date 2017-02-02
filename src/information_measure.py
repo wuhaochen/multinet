@@ -52,6 +52,17 @@ def intersect(mgs,prefixs):
                     g.add_edge(u,v,prefixs[i]+layer,mg[u][v]['multiplex'][layer])
     return g
 
+def jaccard_distance(g,layer1,layer2):
+    counts = extract_count(g,(layer1,layer2))
+    union = counts['01'] + counts['10'] + counts['11']
+    if union == 0:
+        return 0.0
+    return float(counts['11'])/union
+
+def hamming_distance(g,layer1,layer2):
+    counts = extract_count(g,(layer1,layer2))
+    return counts['01'] + counts['10']
+
 def union(mgs,prefixs):
     if len(mgs) != len(prefixs):
         raise Exception("Length does not match.'")
@@ -68,7 +79,6 @@ def union(mgs,prefixs):
             for layer in mg[u][v]['multiplex']:
                 g.add_edge(u,v,prefixs[i]+layer,mg[u][v]['multiplex'][layer])
     return g
-
 
 def transfer_entropy(g1,g2,layers=None):
     if not layers:
