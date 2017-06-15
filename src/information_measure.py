@@ -81,7 +81,23 @@ def union(mgs,prefixs):
     return g
 
 def transfer_entropy(g1,g2,layers=None):
+    te = {}
     if not layers:
         layers = set(g1.layers())&set(g2.layers())
     for layer1,layer2 in itertools.combination(layers,2):
-        counts = extract_count(g1,g2,layer1,layer2)
+        tg = Multinet()
+        tg.add_layer(g1.sub_layer(layer1),'t1_'+layer1)
+        tg.add_layer(g1.sub_layer(layer2),'t1_'+layer2)
+        tg.add_layer(g2.sub_layer(layer1),'t2_'+layer1)
+        tg.add_layer(g2.sub_layer(layer2),'t2_'+layer2)
+        tlayers = ['t1_'+layer1,'t1_'+layer2,'t2_'+layer1,'t2_'+layer2]
+        counts = extract_count(tg,tlayers)
+        total = float(sum(counts.values()))
+        probs = map(lambda x:x/total,counts.values())
+        dist = dit.Distribution(counts.keys(),probs)
+        cmia = dit.shannon.conditional_entropy(dist,[2],[0]) - dit.shannon.conditional_entropy(dist,[2],[0,1])
+        cmib = dit.shannon.conditional_entropy(dist,[3],[1]) - dit.shannon.conditional_entropy(dist,[3],[0,1])
+        te[(layer2,layer1)] = cmia
+        te[(layer1,layer2)] = cmib
+
+    return te
