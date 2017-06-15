@@ -85,3 +85,19 @@ def k_layer_diameter(mg,k):
         return max(reachable)
     else:
         return 0
+
+def harmonic_mean_shortest_path_length(mg,source=None,target=None):
+    if not (source and target):
+        from collections import Counter
+        sum_harmonic = Counter()
+        for layer in mg.layers():
+            sg = mg.sub_layer(layer)
+            shortest_paths_length = nx.all_pairs_shortest_path_length(sg)
+            for u in shortest_paths_length:
+                for v in shortest_paths_length[u]:
+                    if u != v:
+                        sum_harmonic[(u,v)] += 1./shortest_paths_length[u][v]
+        ret = {}
+        for pair in sum_harmonic:
+            ret[pair] = 1./sum_harmonic[pair]
+        return ret
