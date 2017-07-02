@@ -1,4 +1,5 @@
 import dit
+import itertools
 from collections import Counter
 from Multinet import Multinet
 
@@ -84,7 +85,7 @@ def transfer_entropy(g1,g2,layers=None):
     te = {}
     if not layers:
         layers = set(g1.layers())&set(g2.layers())
-    for layer1,layer2 in itertools.combination(layers,2):
+    for layer1,layer2 in itertools.combinations(layers,2):
         tg = Multinet()
         tg.add_layer(g1.sub_layer(layer1),'t1_'+layer1)
         tg.add_layer(g1.sub_layer(layer2),'t1_'+layer2)
