@@ -2,6 +2,7 @@ import dit
 import itertools
 from collections import Counter
 from Multinet import Multinet
+from Multinet import UdMultinet
 
 def extract_count(g,layers):
     c = Counter()
@@ -86,7 +87,12 @@ def transfer_entropy(g1,g2,layers=None):
     if not layers:
         layers = set(g1.layers())&set(g2.layers())
     for layer1,layer2 in itertools.combinations(layers,2):
-        tg = Multinet()
+        if g1.is_directed() != g2.is_directed():
+            raise Exception('Must both be directed or undirected!')
+        if g1.is_directed():
+            tg = Multinet()
+        else:
+            tg = UdMultinet()
         tg.add_layer(g1.sub_layer(layer1),'t1_'+layer1)
         tg.add_layer(g1.sub_layer(layer2),'t1_'+layer2)
         tg.add_layer(g2.sub_layer(layer1),'t2_'+layer1)
