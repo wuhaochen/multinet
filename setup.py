@@ -2,8 +2,8 @@
 
 from distutils.core import setup
 
-packages = ['multinet']
-package_dir = {'multinet': 'src'}
+packages = ['multinet', 'multinet.util']
+package_dir = {'multinet': 'src', 'multinet.util': 'src/util'}
 
 if __name__ == '__main__':
 
