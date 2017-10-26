@@ -66,8 +66,8 @@ def multinet_from_csv(
             if not filter_func(index_dict,line):
                 continue
 
-            origin = line[origin_index]
-            dest = line[dest_index]
+            origin = str(line[origin_index])
+            dest = str(line[dest_index])
             
             layer = layer_func(index_dict,line)
             weight = weight_func(index_dict,line)
