@@ -1,7 +1,13 @@
 # multinet
 
+|build|
+
 multinet is a networkx extension to handle multiplex network. It contains some useful function to handle operations that specific to multiplex network and it's still pretty much compatible with networkx functions as the aggregated network.
 
 It is currently still in progress.
 
 Change to the directory and use `pip install .` to install the package.
+
+.. |build| image:: https://travis-ci.org/wuhaochen/multinet.svg?branch=master
+   :target: https://travis-ci.org/wuhaochen/multinet
+   :alt: Continuous Integration Status
