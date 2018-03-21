@@ -141,7 +141,7 @@ class Multinet(nx.DiGraph):
         g.graph['layers'] = list(layers)
 
         if remove_isolates:
-            g.remove_nodes_from(nx.isolates(g))
+            g.remove_nodes_from(list(nx.isolates(g)))
 
         return g
 
@@ -168,7 +168,7 @@ class Multinet(nx.DiGraph):
                 weight = edge['multiplex'][layer]
                 g.add_edge(u,v,weight=weight)
         if remove_isolates:
-            g.remove_nodes_from(nx.isolates(g))
+            g.remove_nodes_from(list(nx.isolates(g)))
         return g
 
     def aggregated(self):
@@ -440,7 +440,7 @@ class UdMultinet(nx.Graph):
         g.graph['layers'] = list(layers)
 
         if remove_isolates:
-            g.remove_nodes_from(nx.isolates(g))
+            g.remove_nodes_from(list(nx.isolates(g)))
 
         return g
 
@@ -467,7 +467,7 @@ class UdMultinet(nx.Graph):
                 weight = edge['multiplex'][layer]
                 g.add_edge(u,v,weight=weight)
         if remove_isolates:
-            g.remove_nodes_from(nx.isolates(g))
+            g.remove_nodes_from(list(nx.isolates(g)))
         return g
 
     def aggregated(self):

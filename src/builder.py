@@ -5,7 +5,7 @@ import networkx as nx
 import csv
 
 from Multinet import Multinet
-import multinet.util as util
+import util
 
 def multinet_from_csv(
         file_name,

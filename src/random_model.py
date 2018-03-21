@@ -37,7 +37,7 @@ def multiplex_configuration_bipartite(mg,seed=None):
     dtop = map(degree_getter,top)
     dbottom = map(degree_getter,bottom)
 
-    rbg = nx.bipartite_configuration_model(dtop,dbottom,create_using=nx.Graph(),seed=seed)
+    rbg = nx.bipartite.configuration_model(dtop,dbottom,create_using=nx.Graph(),seed=seed)
     rtop,rbottom = bipartite_sets(rbg)
 
     keys = list(rtop)+list(rbottom)
