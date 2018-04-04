@@ -273,6 +273,7 @@ class Multinet(nx.DiGraph):
         import copy
         g = UdMultinet()
         g.add_nodes_from(self.nodes())
+        g.graph['layers'] = self.layers()
         for u,v in self.edges():
             for layer in self[u][v]['multiplex']:
                 g.aggregate_edge(u,v,layer,self[u][v]['multiplex'][layer])
