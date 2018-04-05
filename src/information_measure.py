@@ -4,9 +4,11 @@ from collections import Counter
 from Multinet import Multinet
 from Multinet import UdMultinet
 
-def extract_count(g,layers):
+def extract_count(g,layers,ignore_self_loop=True):
     c = Counter()
     for u,v in g.edges():
+        if ignore_self_loop and u == v:
+            continue
         word = ''
         for layer in layers:
             if layer in g[u][v]['multiplex']:
