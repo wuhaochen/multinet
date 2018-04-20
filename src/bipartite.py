@@ -4,7 +4,7 @@ from __future__ import division
 
 import networkx as nx
 
-from Multinet import Multinet
+from multinet.Multinet import Multinet
 
 #These following lines provide utilities to add and remove prefix to the layer node. In case of a node might have same name as a layer.
 _layer_prefix = 'Layer_'

@@ -4,10 +4,10 @@ A few multiplex configuration models.
 """
 import networkx as nx
 
-from Multinet import Multinet
-from bipartite import bipartize
-from bipartite import bipartite_sets
-from bipartite import reconstruct_from_bipartite
+from multinet.Multinet import Multinet
+from multinet.bipartite import bipartize
+from multinet.bipartite import bipartite_sets
+from multinet.bipartite import reconstruct_from_bipartite
 
 def multiplex_configuration_bipartite(mg,seed=None):
     """Bipartite configuration model.
