@@ -68,9 +68,9 @@ class Multinet(nx.DiGraph):
 
         self._add_layer(layer)
             
-        if not self[u][v].has_key('multiplex'):
+        if 'multiplex' not in self[u][v]:
             self[u][v]['multiplex'] = {}
-        if not self[u][v]['multiplex'].has_key(layer):
+        if layer not in self[u][v]['multiplex']:
             self[u][v]['multiplex'][layer] = 0.0
 
     def add_edge(self, u, v, layer, weight=1.0):
@@ -229,7 +229,7 @@ class Multinet(nx.DiGraph):
         self._add_layer(layer_name)
 
         for u,v in layer_graph.edges():
-            if layer_graph[u][v].has_key('weight'):
+            if 'weight' not in layer_graph[u][v]:
                 weight = layer_graph[u][v]['weight']
             else:
                 weight = 1.0
@@ -296,7 +296,7 @@ class Multinet(nx.DiGraph):
                 g[u][v]['multiplex'] = copy.deepcopy(self[u][v]['multiplex'])
             else:
                 for key in self[u][v]['multiplex']:
-                    if not g[u][v]['multiplex'].has_key(key):
+                    if key not in g[u][v]['multiplex']:
                         g[u][v]['multiplex'][key] = 0.0
                     g[u][v]['multiplex'][key] += self[u][v]['multiplex'][key]
 
@@ -368,9 +368,9 @@ class UdMultinet(nx.Graph):
 
         self._add_layer(layer)
             
-        if not self[u][v].has_key('multiplex'):
+        if 'multiplex' not in self[u][v]:
             self[u][v]['multiplex'] = {}
-        if not self[u][v]['multiplex'].has_key(layer):
+        if layer not in self[u][v]['multiplex']:
             self[u][v]['multiplex'][layer] = 0.0
 
     def add_edge(self, u, v, layer, weight=1.0):
@@ -529,7 +529,7 @@ class UdMultinet(nx.Graph):
         self._add_layer(layer_name)
 
         for u,v in layer_graph.edges():
-            if layer_graph[u][v].has_key('weight'):
+            if 'weight' not in layer_graph[u][v]:
                 weight = layer_graph[u][v]['weight']
             else:
                 weight = 1.0

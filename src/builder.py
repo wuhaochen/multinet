@@ -52,7 +52,7 @@ def multinet_from_csv(
         else:
             netreader = csv.reader(netfile,**csv_reader_argv)
 
-        index_line = netreader.next()
+        index_line = next(netreader)
 
         index = 0
         for item in index_line:
