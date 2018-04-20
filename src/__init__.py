@@ -1,7 +1,9 @@
-from Multinet import *
-from builder import *
-from bipartite import *
-from random_model import *
-from shortest_path import *
-from l_core import *
-from information_measure import *
+from __future__ import absolute_import
+
+from multinet.Multinet import *
+from multinet.builder import *
+from multinet.bipartite import *
+from multinet.random_model import *
+from multinet.shortest_path import *
+from multinet.l_core import *
+from multinet.information_measure import *
