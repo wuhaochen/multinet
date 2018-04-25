@@ -4,7 +4,11 @@ python:
   - "3.6"
 
 install:
+  - pip install --upgrade pytest pytest-cov codecov
   - pip install .
 
 script:
-  - pytest
+  - pytest --cov=multinet
+
+after_success:
+  - codecov
