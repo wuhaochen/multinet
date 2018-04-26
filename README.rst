@@ -1,6 +1,5 @@
-=====
 multinet
-=====
+========
 
 |build|
 
@@ -8,8 +7,25 @@ multinet is a networkx extension to handle multiplex network. It contains some u
 
 It is currently still in progress.
 
-Change to the directory and use `pip install .` to install the package.
+Install
+-------
+Install from the source::
+
+    $  pip install .
 
 .. |build| image:: https://travis-ci.org/wuhaochen/multinet.svg?branch=master
    :target: https://travis-ci.org/wuhaochen/multinet
    :alt: Continuous Integration Status
+
+Simple Example
+--------------
+A two layer multiplex network::
+
+   >>> import multinet as mn
+   >>> mg = mn.MultiNet()
+   >>> mg.add_node(1)
+   >>> mg.add_node(2)
+   >>> mg.add_edge(1, 2, 'Layer_1')
+   >>> mg.add_edge(1, 2, 'Layer_2')
+   >>> mg.number_of_layers()
+   2
