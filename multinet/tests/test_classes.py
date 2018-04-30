@@ -36,7 +36,7 @@ class TestMultinet(object):
 
         mg.remove_empty_layers()
 
-        assert mg.number_of_layers() ==1
+        assert mg.number_of_layers() == 1
 
 
     def test_aggregate_edge(self):
@@ -219,7 +219,7 @@ class TestDiMultinet(object):
 
         mg.remove_empty_layers()
 
-        assert mg.number_of_layers() ==1
+        assert mg.number_of_layers() == 1
 
 
     def test_aggregate_edge(self):

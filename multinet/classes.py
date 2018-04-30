@@ -271,10 +271,11 @@ class Multinet(nx.Graph):
 
         """
         to_remove = self.empty_layers()
-        map(self._remove_layer,to_remove)
+        for layer in to_remove:
+            self._remove_layer(layer)
 
 
-    def remove_layer(self,layer):
+    def remove_layer(self, layer):
         """Remove one specific layer.
 
         """
@@ -562,7 +563,7 @@ class DiMultinet(nx.DiGraph):
             self._remove_layer(layer)
 
 
-    def remove_layer(self,layer):
+    def remove_layer(self, layer):
         """Remove one specific layer.
 
         """
