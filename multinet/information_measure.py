@@ -1,10 +1,11 @@
 import dit
 import itertools
-from collections import Counter
-from multinet.classes import Multinet
-from multinet.classes import UdMultinet
+import multinet as mn
 
-def extract_count(g,layers,ignore_self_loop=True):
+from collections import Counter
+
+
+def extract_count(g, layers, ignore_self_loop=True):
     c = Counter()
     for u,v in g.edges():
         if ignore_self_loop and u == v:
@@ -45,12 +46,17 @@ def mutual_information(g,layers):
     else:
         raise Exception("Not implemented.")
 
-def intersect(mgs,prefixs):
+def intersect(mgs, prefixs):
     if len(mgs) != len(prefixs):
         raise Exception("Length does not match.'")
     if len(mgs) < 1:
         return None
-    g = Multinet()
+
+    directed = mgs[0].is_directed()
+    if directed:
+        g = mn.DiMultinet()
+    else:
+        g = mn.Multinet()
     nodes = set(mgs[0].nodes())
     for mg in mgs:
         nodes &= set(mg.nodes())
@@ -63,6 +69,7 @@ def intersect(mgs,prefixs):
                     g.add_edge(u,v,prefixs[i]+layer,mg[u][v]['multiplex'][layer])
     return g
 
+
 def jaccard_distance(g,layer1,layer2):
     counts = extract_count(g,(layer1,layer2))
     union = counts['01'] + counts['10'] + counts['11']
@@ -70,16 +77,24 @@ def jaccard_distance(g,layer1,layer2):
         return 0.0
     return float(counts['11'])/union
 
+
 def hamming_distance(g,layer1,layer2):
     counts = extract_count(g,(layer1,layer2))
     return counts['01'] + counts['10']
+
 
 def union(mgs,prefixs):
     if len(mgs) != len(prefixs):
         raise Exception("Length does not match.'")
     if len(mgs) < 1:
         return None
-    g = Multinet()
+
+    directed = mgs[0].is_directed()
+    if directed:
+        g = mn.DiMultinet()
+    else:
+        g = mn.Multinet()
+
     nodes = set()
     for mg in mgs:
         nodes |= set(mg.nodes())
@@ -91,6 +106,7 @@ def union(mgs,prefixs):
                 g.add_edge(u,v,prefixs[i]+layer,mg[u][v]['multiplex'][layer])
     return g
 
+
 def transfer_entropy(g1,g2,layers=None):
     te = {}
     if not layers:
@@ -99,9 +115,9 @@ def transfer_entropy(g1,g2,layers=None):
         if g1.is_directed() != g2.is_directed():
             raise Exception('Must both be directed or undirected!')
         if g1.is_directed():
-            tg = Multinet()
+            tg = mn.DiMultinet()
         else:
-            tg = UdMultinet()
+            tg = mn.Multinet()
         tg.add_layer(g1.sub_layer(layer1),'t1_'+layer1)
         tg.add_layer(g1.sub_layer(layer2),'t1_'+layer2)
         tg.add_layer(g2.sub_layer(layer1),'t2_'+layer1)
