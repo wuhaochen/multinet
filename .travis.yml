@@ -8,7 +8,7 @@ install:
   - pip install .
 
 script:
-  - pytest --cov --cov-append
+  - cd multinet && pytest --cov=multinet
 
 after_success:
   - codecov
