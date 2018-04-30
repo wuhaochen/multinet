@@ -155,14 +155,16 @@ class TestMultinet(object):
 
         sg = nx.Graph()
         sg.add_edge(1, 2, weight=7)
+        sg.add_edge(2, 3)
 
         mg.add_layer(sg, 'L3')
-        assert mg.number_of_nodes() == 3
-        assert mg.number_of_edges() == 2
+        assert mg.number_of_nodes() == 4
+        assert mg.number_of_edges() == 3
         assert mg.number_of_layers() == 3
 
         assert mg[1][2]['multiplex']['L2'] == 6
         assert mg[1][2]['multiplex']['L3'] == 7
+        assert mg[2][3]['multiplex']['L3'] == 1
 
 
     def test_remove_layer(self):
@@ -331,21 +333,23 @@ class TestDiMultinet(object):
 
 
     def test_add_layer(self):
-        mg = mn.DiMultinet()
+        mg = mn.Multinet()
 
         mg.add_edge(0, 1, 'L1', weight=5)
         mg.add_edge(1, 2, 'L2', weight=6)
 
-        sg = nx.DiGraph()
+        sg = nx.Graph()
         sg.add_edge(1, 2, weight=7)
+        sg.add_edge(2, 3)
 
         mg.add_layer(sg, 'L3')
-        assert mg.number_of_nodes() == 3
-        assert mg.number_of_edges() == 2
+        assert mg.number_of_nodes() == 4
+        assert mg.number_of_edges() == 3
         assert mg.number_of_layers() == 3
 
         assert mg[1][2]['multiplex']['L2'] == 6
         assert mg[1][2]['multiplex']['L3'] == 7
+        assert mg[2][3]['multiplex']['L3'] == 1
 
 
     def test_remove_layer(self):
@@ -370,3 +374,20 @@ class TestDiMultinet(object):
         assert mg.number_of_nodes() == 3
         assert mg.number_of_edges() == 1
         assert mg.number_of_layers() == 2
+
+
+    def test_to_undirected(self):
+        mg = mn.DiMultinet()
+
+        mg.add_edge(0, 1, 'L1', weight=5)
+        mg.add_edge(1, 2, 'L2', weight=6)
+        mg.add_edge(2, 1, 'L3', weight=2)
+
+        assert mg.number_of_nodes() == 3
+        assert mg.number_of_edges() == 3
+        assert mg.number_of_layers() == 3
+
+        nmg = mg.to_undirected()
+        assert nmg.number_of_nodes() == 3
+        assert nmg.number_of_edges() == 2
+        assert nmg.number_of_layers() == 3

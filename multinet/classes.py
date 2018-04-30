@@ -591,30 +591,3 @@ class DiMultinet(nx.DiGraph):
             for layer in self[u][v]['multiplex']:
                 g.aggregate_edge(u,v,layer,self[u][v]['multiplex'][layer])
         return g
-        
-        
-    def to_undirected_(self):
-        """Temporary solution transforming DiMultinet to an undirected Graph.
-        
-        Convert DiMultinet to undirected Graph with all properties so
-        that it can be used by the function in this package, but it doesn't
-        have all the feature as DiMultinet.
-        Run this method only after finishing all merge/sub_layers.
-
-        """
-        import copy
-        g = nx.Graph()
-        g.add_nodes_from(self.nodes())
-        g.graph['layers'] = self.layers()
-
-        for u,v in self.edges():
-            if not g.has_edge(u,v):
-                g.add_edge(u,v)
-                g[u][v]['multiplex'] = copy.deepcopy(self[u][v]['multiplex'])
-            else:
-                for key in self[u][v]['multiplex']:
-                    if key not in g[u][v]['multiplex']:
-                        g[u][v]['multiplex'][key] = 0.0
-                    g[u][v]['multiplex'][key] += self[u][v]['multiplex'][key]
-
-        return g
