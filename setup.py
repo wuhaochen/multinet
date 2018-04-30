@@ -3,7 +3,7 @@
 from setuptools import setup
 
 packages = ['multinet', 'multinet.util']
-package_dir = {'multinet': 'src', 'multinet.util': 'src/util'}
+package_dir = {'multinet': 'multinet', 'multinet.util': 'multinet/util'}
 
 if __name__ == '__main__':
 

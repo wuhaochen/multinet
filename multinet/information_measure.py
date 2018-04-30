@@ -1,8 +1,8 @@
 import dit
 import itertools
 from collections import Counter
-from multinet.Multinet import Multinet
-from multinet.Multinet import UdMultinet
+from multinet.classes import Multinet
+from multinet.classes import UdMultinet
 
 def extract_count(g,layers,ignore_self_loop=True):
     c = Counter()

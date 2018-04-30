@@ -4,7 +4,7 @@ A few multiplex configuration models.
 """
 import networkx as nx
 
-from multinet.Multinet import Multinet
+from multinet.classes import Multinet
 from multinet.bipartite import bipartize
 from multinet.bipartite import bipartite_sets
 from multinet.bipartite import reconstruct_from_bipartite
