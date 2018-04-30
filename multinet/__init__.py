@@ -1,6 +1,6 @@
 from __future__ import absolute_import
 
-from multinet.Multinet import *
+from multinet.classes import *
 from multinet.builder import *
 from multinet.bipartite import *
 from multinet.random_model import *
