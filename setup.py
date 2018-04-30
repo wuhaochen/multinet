@@ -7,7 +7,7 @@ package_dir = {'multinet': 'multinet', 'multinet.util': 'multinet/util'}
 
 if __name__ == '__main__':
 
-    setup(name='Multinet',
+    setup(name='multinet',
           version='0.01',
           description = 'Networkx extension for multiplex networks',
           author='Haochen Wu',
