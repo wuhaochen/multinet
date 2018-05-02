@@ -2,9 +2,8 @@
 """
 
 import networkx as nx
-from multinet.classes import Multinet
 
-def l_core(mg,l):
+def l_core(mg, l):
     """Return the l-core of mg.
 
     """

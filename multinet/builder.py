@@ -2,9 +2,9 @@
 
 """
 import networkx as nx
+import multinet as mn
 import csv
 
-from multinet.classes import Multinet
 import multinet.util as util
 
 def multinet_from_csv(
@@ -12,7 +12,8 @@ def multinet_from_csv(
         filter_func=util.default_filter,
         weight_func=util.default_weight,
         layer_func=util.default_layer,
-        ow='ORIGIN',dw='DEST',
+        ow='ORIGIN', dw='DEST',
+        create_using=mn.DiMultinet(),
         **csv_reader_argv):
     """Build Multinet from csv files.
 
@@ -38,7 +39,7 @@ def multinet_from_csv(
     
     """
     index_dict = {}
-    mg = Multinet()
+    mg = create_using
 
     if type(weight_func) == str:
         weight_func = util.weight_from_string(weight_func)

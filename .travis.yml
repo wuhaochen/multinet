@@ -1,15 +1,28 @@
 language: python
 
-python:
-  - "2.7"
-  - "3.6"
+matrix:
+  include:
+    - os: linux
+      python: 2.7
+      env:
+      - REPORT_COVERAGE=1
+    - python: 2.7
+    - python: 3.6
+
+before_install:
+  - uname -a
+  - printenv
 
 install:
-  - pip install --upgrade pytest pytest-cov codecov
-  - pip install .
+  - source tools/travis/linux_install.sh
 
 script:
-  - pytest --cov=multinet
+  - source tools/travis/script.sh
 
 after_success:
-  - codecov
+  - if [[ "${REPORT_COVERAGE}" == 1 ]]; then
+    codecov;
+    fi
+
+notification:
+  email:false

@@ -3,8 +3,7 @@
 from __future__ import division
 
 import networkx as nx
-
-from multinet.classes import Multinet
+import multinet as mn
 
 #These following lines provide utilities to add and remove prefix to the layer node. In case of a node might have same name as a layer.
 _layer_prefix = 'Layer_'
@@ -12,7 +11,8 @@ _layer_prefix = 'Layer_'
 _prefix = lambda x: _layer_prefix + str(x)
 _remove_prefix = lambda x: x[len(_layer_prefix):]
 
-def _add_layer_nodes(bg,layers):
+
+def _add_layer_nodes(bg, layers):
     """Add nodes represents the layers in multiplex network to the bipartite graph
 
     Parameters:
@@ -27,6 +27,7 @@ def _add_layer_nodes(bg,layers):
     layer_names = map(_prefix,layers)
     bg.add_nodes_from(layer_names, bipartite=0)
     
+
 def bipartize_by_node(mg, weighted=True):
     """Project a Multinet to a bipartite graph using layer-node view.
 
@@ -54,7 +55,8 @@ def bipartize_by_node(mg, weighted=True):
                 bipartite_graph.add_edge(_prefix(layer),node,weight=w)
 
     return bipartite_graph
-    
+
+
 def bipartize_by_edge(mg, weighted=True):
     """Project a Multinet to a bipartite graph using layer-edge view.
 
@@ -82,6 +84,7 @@ def bipartize_by_edge(mg, weighted=True):
 
     return bipartite_graph
 
+
 def bipartize(mg,mode,weighted=True):
     """Project a Multinet to a bipartite graph using layer-edge view.
 
@@ -108,6 +111,7 @@ def bipartize(mg,mode,weighted=True):
     else:
         raise Exception("Mode must be string!")
         
+
 def bipartite_sets(bg):
     """Return two nodes sets of a bipartite graph.
 
@@ -117,11 +121,12 @@ def bipartite_sets(bg):
       Bipartite graph to operate on.
 
     """
-    top = set(n for n,d in bg.nodes(data=True) if d['bipartite']==0)
+    top = set(n for n, d in bg.nodes(data=True) if d['bipartite']==0)
     bottom = set(bg) - top
-    return (top,bottom)
+    return (top, bottom)
 
-def reconstruct_from_bipartite(bg):
+
+def reconstruct_from_bipartite(bg, create_using=mn.DiMultinet()):
     """Reconstruct a multiplex network from a layer-edge bipartite graph.
 
     Parameters:
@@ -130,8 +135,8 @@ def reconstruct_from_bipartite(bg):
       A layer-edge bipartite graph that used to reconstruct the multiplex network.
 
     """
-    top,bottom = bipartite_sets(bg)
-    mg = Multinet()
+    top, bottom = bipartite_sets(bg)
+    mg = create_using
 
     layers = map(_remove_prefix,list(top))
 
@@ -144,6 +149,7 @@ def reconstruct_from_bipartite(bg):
             mg.add_edge(u,v,layer)
 
     return mg
+
 
 def attach_importance(bg):
     """New measure working in progress.
