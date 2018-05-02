@@ -333,7 +333,7 @@ class TestDiMultinet(object):
 
 
     def test_add_layer(self):
-        mg = mn.Multinet()
+        mg = mn.DiMultinet()
 
         mg.add_edge(0, 1, 'L1', weight=5)
         mg.add_edge(1, 2, 'L2', weight=6)
