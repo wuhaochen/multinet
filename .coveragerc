@@ -1,7 +1,7 @@
 # .coveragerc to control coverage.py
 [run]
 omit = */tests/*
-include = */multinet/*
+include = multinet/*
 
 [paths]
 source =

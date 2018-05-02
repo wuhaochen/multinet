@@ -2,8 +2,10 @@
 
 from setuptools import setup
 
-packages = ['multinet', 'multinet.util']
-package_dir = {'multinet': 'multinet', 'multinet.util': 'multinet/util'}
+packages = ['multinet', 'multinet.util', 'multinet.tests']
+package_dir = {'multinet': 'multinet',
+               'multinet.util': 'multinet/util',
+               'multinet.tests': 'multinet/tests/'}
 
 if __name__ == '__main__':
 
