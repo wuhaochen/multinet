@@ -58,28 +58,6 @@ def multiplex_configuration_bipartite(mg, seed=None):
     return nmg
 
 
-def _random_int_list(length, a=0, b=1000000, seed=None):
-    """Return a list of uniform random intergers.
-
-    Parameters:
-    -----------
-    length: int
-      The list length.
-
-    a, b: int
-      The range of the generated integers.
-
-    seed: object
-      The seed for the random number generator.
-    """
-    import random
-    random.seed(seed)
-    l = []
-    for i in range(length):
-        l.append(random.randint(a,b))
-    return l
-    
-
 def multiplex_configuration_independent(mg, seed=None, include_all=False):
     """Run configuration model independently for each layer.
 
@@ -100,7 +78,8 @@ def multiplex_configuration_independent(mg, seed=None, include_all=False):
     layers = mg.layers()
     nl = len(layers)
 
-    seeds = _random_int_list(nl,seed=seed)
+    r = random.Random()
+    r.seed(seed)
 
     directed = mg.is_directed()
     if directed:
@@ -121,7 +100,7 @@ def multiplex_configuration_independent(mg, seed=None, include_all=False):
         else:
             degs = [sg.degree(n) for n in nodes]
             rsg = nx.configuration_model(
-                degs, create_using=nx.Graph(), seed=seeds.pop())
+                degs, create_using=nx.Graph(), seed=r.random())
         rnodes = rsg.nodes()
         mapping = dict(zip(rnodes, nodes))
         nrsg = nx.relabel_nodes(rsg, mapping)
@@ -150,7 +129,8 @@ def multiplex_erdos_renyi(mg, seed=None, include_all=True):
     layers = mg.layers()
     nl = len(layers)
 
-    seeds = _random_int_list(nl, seed=seed)
+    r = random.Random()
+    r.seed(seed)
 
     directed = mg.is_directed()
     if directed:
@@ -170,7 +150,7 @@ def multiplex_erdos_renyi(mg, seed=None, include_all=True):
         else:
             p = 2 * nedge/ (nnode * (nnode - 1))
         rsg = nx.erdos_renyi_graph(
-            nnode, p, seed=seeds.pop(), directed=directed)
+            nnode, p, seed=r.random(), directed=directed)
         rnodes = rsg.nodes()
         mapping = dict(zip(rnodes, nodes))
         nrsg = nx.relabel_nodes(rsg, mapping)
