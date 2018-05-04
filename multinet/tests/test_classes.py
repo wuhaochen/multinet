@@ -1,7 +1,6 @@
 """
 Test the Multinet Class.
 """
-import pytest
 import multinet as mn
 import networkx as nx
 

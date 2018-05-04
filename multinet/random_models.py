@@ -4,6 +4,8 @@ A few multiplex configuration models.
 """
 from __future__ import division
 
+import random
+
 import networkx as nx
 import multinet as mn
 
