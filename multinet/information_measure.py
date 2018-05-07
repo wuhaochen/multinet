@@ -1,3 +1,5 @@
+from __future__ import division
+
 import dit
 import itertools
 import multinet as mn
@@ -21,30 +23,40 @@ def extract_count(g, layers, ignore_self_loop=True):
     nnode = g.number_of_nodes()
     nedge = g.number_of_edges()
 
-    if ignore_self_loop:
-        total_position = nnode*(nnode-1)
-    else:
-        total_position = nnode*nnode
-
+    total_position = nnode * (nnode - 1)
+    
     if g.is_directed():
-        non_edge = total_position-nedge
+        non_edge = total_position - nedge
     else:
-        non_edge = total_position/2-nedge
+        non_edge = total_position / 2 - nedge
 
+    if not ignore_self_loop:
+        non_edge += nnode
+        
     word = '0'*len(layers)
     c[word] += non_edge
+
+    # Add count 0 for non-existed config.
+    for i in xrange(2 ** len(layers)):
+        word = bin(i)[2:].zfill(len(layers))
+        if word not in c:
+            c[word] = 0
+
     return c
-        
+
+
 def mutual_information(g,layers):
-    counts = extract_count(g,layers)
-    total = float(sum(counts.values()))
-    probs = map(lambda x:x/total,counts.values())
-    dist = dit.Distribution(counts.keys(),probs)
+    counts = extract_count(g, layers)
+    total = sum(counts.values())
+    probs = [ (key, value / total)
+              for key, value in counts.items() ]
+    dist = dit.Distribution(*zip(*probs))
 
     if len(layers) == 2:
         return dit.shannon.mutual_information(dist,[0],[1])
     else:
         raise Exception("Not implemented.")
+
 
 def intersect(mgs, prefixs):
     if len(mgs) != len(prefixs):
