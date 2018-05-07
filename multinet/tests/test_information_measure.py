@@ -32,5 +32,5 @@ class TestMutualInformation(object):
     def test_mutual_infomation(self):
         assert mn.extract_count(mg, ['1', '2'])['00'] == 0
 
-class TestTransferEntropy(object):
+class TestIINF(object):
     pass

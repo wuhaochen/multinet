@@ -107,7 +107,7 @@ def union(mgs,prefixs):
     return g
 
 
-def transfer_entropy(g1,g2,layers=None):
+def iinf(g1,g2,layers=None):
     te = {}
     if not layers:
         layers = set(g1.layers())&set(g2.layers())
