@@ -37,7 +37,7 @@ def extract_count(g, layers, ignore_self_loop=True):
     c[word] += non_edge
 
     # Add count 0 for non-existed config.
-    for i in xrange(2 ** len(layers)):
+    for i in range(2 ** len(layers)):
         word = bin(i)[2:].zfill(len(layers))
         if word not in c:
             c[word] = 0
