@@ -76,8 +76,9 @@ def iinf(g1,g2,layers=None):
         tlayers = ['t1_'+layer1,'t1_'+layer2,'t2_'+layer1,'t2_'+layer2]
         counts = extract_count(tg,tlayers)
         total = float(sum(counts.values()))
-        probs = map(lambda x:x/total,counts.values())
-        dist = dit.Distribution(counts.keys(),probs)
+        probs = [ (key, value / total)
+                  for key, value in counts.items() ]
+        dist = dit.Distribution(*zip(*probs))
         cmia = dit.shannon.conditional_entropy(dist,[2],[0]) - dit.shannon.conditional_entropy(dist,[2],[0,1])
         cmib = dit.shannon.conditional_entropy(dist,[3],[1]) - dit.shannon.conditional_entropy(dist,[3],[0,1])
         te[(layer2,layer1)] = cmia
