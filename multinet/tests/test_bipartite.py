@@ -38,3 +38,15 @@ class TestBipartite(object):
         assert (bg.number_of_nodes() ==
                 mg.number_of_layers() +
                 mg.number_of_edges())
+
+
+class TestReconstruct(object):
+
+
+    def test_reconstruct(self):
+        bg = mn.bipartize(mg, 'e')
+        nmg = mn.reconstruct_from_bipartite(bg, mn.Multinet())
+        assert nmg.number_of_layers() == mg.number_of_layers()
+        assert nmg.number_of_nodes() == mg.number_of_nodes()
+        assert nmg.number_of_edges() == mg.number_of_edges()
+
