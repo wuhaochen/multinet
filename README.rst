@@ -1,7 +1,7 @@
 multinet
 ========
 
-|build|
+|build| |codecov|
 
 multinet is a networkx extension to handle multiplex network. It contains some useful function to handle operations that specific to multiplex network and it's still pretty much compatible with networkx functions as the aggregated network.
 
@@ -12,10 +12,6 @@ Install
 Install from the source::
 
     $  pip install .
-
-.. |build| image:: https://travis-ci.org/wuhaochen/multinet.svg?branch=master
-   :target: https://travis-ci.org/wuhaochen/multinet
-   :alt: Continuous Integration Status
 
 Simple Example
 --------------
@@ -29,3 +25,11 @@ A two layer multiplex network::
    >>> mg.add_edge(1, 2, 'Layer_2')
    >>> mg.number_of_layers()
    2
+
+.. |build| image:: https://travis-ci.org/wuhaochen/multinet.svg?branch=master
+   :target: https://travis-ci.org/wuhaochen/multinet
+   :alt: Continuous Integration Status
+   
+.. |codecov| image:: https://codecov.io/gh/wuhaochen/multinet/branch/master/graph/badge.svg
+   :target: https://codecov.io/gh/wuhaochen/multinet
+   :alt: Code Coverage Status
