@@ -18,7 +18,7 @@ Simple Example
 A two layer multiplex network::
 
    >>> import multinet as mn
-   >>> mg = mn.MultiNet()
+   >>> mg = mn.Multinet()
    >>> mg.add_node(1)
    >>> mg.add_node(2)
    >>> mg.add_edge(1, 2, 'Layer_1')
