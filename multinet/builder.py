@@ -13,7 +13,7 @@ def multinet_from_csv(
         weight_func=util.default_weight,
         layer_func=util.default_layer,
         ow='ORIGIN', dw='DEST',
-        create_using=mn.DiMultinet(),
+        create_using=None,
         **csv_reader_argv):
     """Build Multinet from csv files.
 
@@ -39,6 +39,8 @@ def multinet_from_csv(
     
     """
     index_dict = {}
+    if create_using is None:
+        create_using = mn.DiMultinet()
     mg = create_using
 
     if type(weight_func) == str:
