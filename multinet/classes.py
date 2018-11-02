@@ -129,11 +129,12 @@ class Multinet(nx.Graph):
         Parameters:
         -----------
         layers: container
-          The list of layers that is to be remained.
-          The layers that is not in the original multiplex network will be ignored.
+            The list of layers that is to be remained.
+            The layers that is not in the original multiplex network will be
+        ignored.
 
         remove_isolates: bool (default False)
-          Remove the isolated nodes in the new multiplex network.
+            Remove the isolated nodes in the new multiplex network.
         
         """
         layers = set(layers) & set(self.layers())
@@ -204,10 +205,11 @@ class Multinet(nx.Graph):
         Parameters:
         -----------
         layers:
-          The layers to be merged.
+            The layers to be merged.
 
         new_name: str or None
-          The name of the merged layer. If remains None, the new name will be the merged layers joined with underline.
+            The name of the merged layer. If remains None, the new name will be
+        the merged layers joined with underline.
         
         """
         if not new_name:
@@ -234,10 +236,10 @@ class Multinet(nx.Graph):
         Parameters:
         -----------
         layer_graph: nx.DiGraph
-          The layers to be added.
+            The layers to be added.
 
         layer_name: str
-          The name of the new layer.
+            The name of the new layer.
         
         
         """
@@ -312,7 +314,7 @@ class DiMultinet(nx.DiGraph):
         Parameters:
         -----------
         layer: str
-          layer to be added to the layer list.
+            layer to be added to the layer list.
 
         """
         if layer not in self.layers():
@@ -325,7 +327,7 @@ class DiMultinet(nx.DiGraph):
         Parameters:
         -----------
         layer: str
-          layer to be removed from the layer list.
+            layer to be removed from the layer list.
 
         """
         self.graph['layers'].remove(layer)
@@ -352,10 +354,10 @@ class DiMultinet(nx.DiGraph):
         Parameters:
         -----------
         u, v:
-          Nodes the edge connects.
+            Nodes the edge connects.
 
         layer:
-          Layer the edge sit on.
+            Layer the edge sit on.
         
         """
         super(self.__class__,self).add_edge(u,v)
@@ -376,13 +378,13 @@ class DiMultinet(nx.DiGraph):
         Parameters:
         -----------
         u, v:
-          Nodes the edge connects.
+            Nodes the edge connects.
 
         layer:
-          Layer the edge sit on.
+            Layer the edge sit on.
         
         weight: float (default 1.0)
-          The weight of the edge.
+            The weight of the edge.
         
         """
         self._init_edge(u, v, layer)
@@ -397,13 +399,13 @@ class DiMultinet(nx.DiGraph):
         Parameters:
         -----------
         u, v:
-          Nodes the edge connects.
+            Nodes the edge connects.
 
         layer:
-          Layer the edge sit on.
+            Layer the edge sit on.
         
         weight: float (default 1.0)
-          The weight of the edge.
+            The weight of the edge.
         
         """
 
@@ -417,11 +419,12 @@ class DiMultinet(nx.DiGraph):
         Parameters:
         -----------
         layers: container
-          The list of layers that is to be remained.
-          The layers that is not in the original multiplex network will be ignored.
+            The list of layers that is to be remained.
+            The layers that is not in the original multiplex network will be
+        ignored.
 
         remove_isolates: bool (default False)
-          Remove the isolated nodes in the new multiplex network.
+            Remove the isolated nodes in the new multiplex network.
         
         """
         layers = set(layers)&set(self.layers())
@@ -453,10 +456,10 @@ class DiMultinet(nx.DiGraph):
         Parameters:
         -----------
         layer: str
-          The layer intended to be extract.
+            The layer intended to be extract.
 
         remove_isolates: bool (default False)
-          Remove the isolated nodes in the new graph.
+            Remove the isolated nodes in the new graph.
         
         """
         if layer not in self.layers():
@@ -492,10 +495,11 @@ class DiMultinet(nx.DiGraph):
         Parameters:
         -----------
         layers:
-          The layers to be merged.
+            The layers to be merged.
 
         new_name: str or None
-          The name of the merged layer. If remains None, the new name will be the merged layers joined with underline.
+            The name of the merged layer. If remains None, the new name will be
+        the merged layers joined with underline.
         
         """
         if not new_name:
