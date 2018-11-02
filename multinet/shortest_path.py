@@ -12,16 +12,16 @@ def all_pairs_k_layer_shortest_path_length(mg, k):
     Parameters:
     -----------
     mg: Multinet
-      Multiplex network to calculate.
+        Multiplex network to calculate.
 
     k: int
-      Number of layers allowed to use when k is positive.
-      Number of layers not allowed to use when k is negative.
+        Number of layers allowed to use when k is positive.
+        Number of layers not allowed to use when k is negative.
       
 
     Returns:
     --------
-    A dictionary whose key is a source-destination pair
+        A dictionary whose key is a source-destination pair
     and its value is the corresponding k-layer shortest path length.
 
     """
@@ -55,10 +55,10 @@ def k_layer_reachability(mg,k):
     Parameters:
     -----------
     mg: Multinet
-      Multiplex network to calculate.
+        Multiplex network to calculate.
 
     k: int
-      Number of layers allowed to use.
+        Number of layers allowed to use.
 
     """
     lengths = all_pairs_k_layer_shortest_path_length(mg, k)
@@ -76,10 +76,10 @@ def k_layer_diameter(mg,k):
     Parameters:
     -----------
     mg: Multinet
-      Multiplex network to calculate.
+        Multiplex network to calculate.
 
     k: int
-      Number of layers allowed to use.
+        Number of layers allowed to use.
 
     """
     lengths = all_pairs_k_layer_shortest_path_length(mg,k)

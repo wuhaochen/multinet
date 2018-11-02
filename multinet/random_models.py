@@ -15,8 +15,10 @@ from multinet.bipartite import reconstruct_from_bipartite
 
 def multiplex_configuration_bipartite(mg, seed=None):
     """Bipartite configuration model.
-    First convert the multiplex network to a bipartite graph using layer-edge view. Then run a configuraion model on the bipartite graph and reconstruct a multiplex network.
-    This configuration model will preserve the aggregated network and the number of layers each edge sits on.
+    First convert the multiplex network to a bipartite graph using layer-edge
+    view. Then run a configuraion model on the bipartite graph and reconstruct
+    a multiplex network. This configuration model will preserve the aggregated
+    network and the number of layers each edge sits on.
 
     Parameters
     ----------
@@ -111,7 +113,8 @@ def multiplex_configuration_independent(mg, seed=None, include_all=False):
 
 
 def multiplex_erdos_renyi(mg, seed=None, include_all=True):
-    """Return a Multinet such that each layer is an Erdos-Renyi network with same p as the original Multinet given.
+    """Return a Multinet such that each layer is an Erdos-Renyi network with
+    same p as the original Multinet given.
 
     Parameters
     ----------

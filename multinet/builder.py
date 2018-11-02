@@ -20,24 +20,28 @@ def multinet_from_csv(
     Parameters:
     -----------
     filename: str
-      The path to csv file.
+        The path to csv file.
 
     filter_func: func
-      A function takes line description and a line from the csv file and return a bool. See util/filter_helper for detail.
+        A function takes line description and a line from the csv file and
+    return a bool. See util/filter_helper for detail.
 
     weight_func: func or str
-      A function takes line description and a line from the csv file and return a number. See util/weight_helper for detail.
+        A function takes line description and a line from the csv file and
+    return a number. See util/weight_helper for detail.
 
     layer_func: func or str
-      A function takes line description and a line from the csv file and return a str. See util/layer_helper for detail.
+        A function takes line description and a line from the csv file and
+    return a str. See util/layer_helper for detail.
 
     ow, dw: str
-      The key to get nodes name.
+        The key to get nodes name.
 
     csv_reader_argv:
-      Arguments for internal csv reader. If not specified, use default settings. See Python csv module for detail.
-    
+        Arguments for internal csv reader. If not specified, use default
+    settings. See Python csv module for detail.
     """
+
     index_dict = {}
     if create_using is None:
         create_using = mn.DiMultinet()
@@ -51,7 +55,10 @@ def multinet_from_csv(
         
     with open(file_name) as netfile:
         if not csv_reader_argv:
-            netreader = csv.reader(netfile,delimiter=',',quotechar='\"',quoting=csv.QUOTE_NONNUMERIC)
+            netreader = csv.reader(netfile,
+                                   delimiter=',',
+                                   quotechar='\"',
+                                   quoting=csv.QUOTE_NONNUMERIC)
         else:
             netreader = csv.reader(netfile,**csv_reader_argv)
 

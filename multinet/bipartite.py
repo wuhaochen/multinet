@@ -10,7 +10,8 @@ try:
 except NameError:
     basestring = str
 
-#These following lines provide utilities to add and remove prefix to the layer node. In case of a node might have same name as a layer.
+# These following lines provide utilities to add and remove prefix to the layer
+# node. In case of a node might have same name as a layer.
 _layer_prefix = 'Layer_'
 
 _prefix = lambda x: _layer_prefix + str(x)
@@ -18,15 +19,15 @@ _remove_prefix = lambda x: x[len(_layer_prefix):]
 
 
 def _add_layer_nodes(bg, layers):
-    """Add nodes represents the layers in multiplex network to the bipartite graph
+    """Add nodes represents the layers to the bipartite graph.
 
     Parameters:
     -----------
     bg: nx.Graph
-      Bipartite graph to operate on.
+        Bipartite graph to operate on.
 
     layers: list
-      A list of layers.
+        A list of layers.
 
     """
     layer_names = map(_prefix,layers)
@@ -39,10 +40,10 @@ def bipartize_by_node(mg, weighted=True):
     Parameters:
     -----------
     mg: Multinet
-      Mulitplex network to project.
+        Mulitplex network to project.
 
     weighted: bool
-      Whether or not use the weight information in the multiplex network.
+        Whether or not use the weight information in the multiplex network.
 
     """
     bipartite_graph = nx.Graph()
@@ -96,13 +97,13 @@ def bipartize(mg,mode,weighted=True):
     Parameters:
     -----------
     mg: Multinet
-      Mulitplex network to project.
+        Mulitplex network to project.
 
     mode: str
-      Whether using layer-node view or layer-edge view.
+        Whether using layer-node view or layer-edge view.
 
     weighted: bool
-      Whether or not use the weight information in the multiplex network.
+        Whether or not use the weight information in the multiplex network.
 
     """
     if isinstance(mode,basestring):
@@ -123,7 +124,7 @@ def bipartite_sets(bg):
     Parameters:
     -----------
     bg: nx.Graph
-      Bipartite graph to operate on.
+        Bipartite graph to operate on.
 
     """
     top = set(n for n, d in bg.nodes(data=True) if d['bipartite']==0)
@@ -137,7 +138,8 @@ def reconstruct_from_bipartite(bg, create_using=mn.DiMultinet()):
     Parameters:
     -----------
     bg: nx.Graph
-      A layer-edge bipartite graph that used to reconstruct the multiplex network.
+        A layer-edge bipartite graph that used to reconstruct the multiplex
+    network.
 
     """
     top, bottom = bipartite_sets(bg)
