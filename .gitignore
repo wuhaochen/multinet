@@ -101,6 +101,9 @@ ENV/
 # mypy
 .mypy_cache/
 
+# vscode
+.vscode/
+
 # customized
 *~
 pic/*
