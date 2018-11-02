@@ -78,7 +78,6 @@ def multiplex_configuration_independent(mg, seed=None, include_all=False):
 
     """
     layers = mg.layers()
-    nl = len(layers)
 
     r = random.Random()
     r.seed(seed)
@@ -98,11 +97,11 @@ def multiplex_configuration_independent(mg, seed=None, include_all=False):
             in_degs = [sg.in_degree(n) for n in nodes]
             out_degs = [sg.out_degree(n) for n in nodes]
             rsg = nx.directed_configuration_model(
-                in_degs, out_degs, create_using=nx.DiGraph(), seed=seeds.pop())
+                in_degs, out_degs, create_using=nx.DiGraph(), seed=r)
         else:
             degs = [sg.degree(n) for n in nodes]
             rsg = nx.configuration_model(
-                degs, create_using=nx.Graph(), seed=r.random())
+                degs, create_using=nx.Graph(), seed=r)
         rnodes = rsg.nodes()
         mapping = dict(zip(rnodes, nodes))
         nrsg = nx.relabel_nodes(rsg, mapping)
@@ -129,7 +128,6 @@ def multiplex_erdos_renyi(mg, seed=None, include_all=True):
 
     """
     layers = mg.layers()
-    nl = len(layers)
 
     r = random.Random()
     r.seed(seed)
@@ -152,7 +150,7 @@ def multiplex_erdos_renyi(mg, seed=None, include_all=True):
         else:
             p = 2 * nedge/ (nnode * (nnode - 1))
         rsg = nx.erdos_renyi_graph(
-            nnode, p, seed=r.random(), directed=directed)
+            nnode, p, seed=r, directed=directed)
         rnodes = rsg.nodes()
         mapping = dict(zip(rnodes, nodes))
         nrsg = nx.relabel_nodes(rsg, mapping)
