@@ -67,7 +67,7 @@ class TestExtractCount(object):
         assert count['01'] == 0
         assert count['10'] == 0
         assert count['11'] == 5
-        
+
         count = mn.extract_count(mg, ['1', '2'], False)
         assert len(count) == 4
         assert count['00'] == 5

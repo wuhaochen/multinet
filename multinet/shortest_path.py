@@ -17,7 +17,7 @@ def all_pairs_k_layer_shortest_path_length(mg, k):
     k: int
         Number of layers allowed to use when k is positive.
         Number of layers not allowed to use when k is negative.
-      
+
 
     Returns:
     --------

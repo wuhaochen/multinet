@@ -9,7 +9,7 @@ class Multinet(nx.Graph):
     """
     Undirected Multiplex network class.
     """
-    
+
     def __init__(self):
         """Initialize a Multinet with empty layer list.
 
@@ -68,12 +68,12 @@ class Multinet(nx.Graph):
 
         layer:
           Layer the edge sit on.
-        
+
         """
         super(self.__class__,self).add_edge(u,v)
 
         self._add_layer(layer)
-            
+
         if 'multiplex' not in self[u][v]:
             self[u][v]['multiplex'] = {}
         if layer not in self[u][v]['multiplex']:
@@ -92,10 +92,10 @@ class Multinet(nx.Graph):
 
         layer:
           Layer the edge sit on.
-        
+
         weight: float (default 1.0)
           The weight of the edge.
-        
+
         """
         self._init_edge(u, v, layer)
         self[u][v]['multiplex'][layer] = weight
@@ -113,10 +113,10 @@ class Multinet(nx.Graph):
 
         layer:
           Layer the edge sit on.
-        
+
         weight: float (default 1.0)
           The weight of the edge.
-        
+
         """
 
         self._init_edge(u, v, layer)
@@ -135,7 +135,7 @@ class Multinet(nx.Graph):
 
         remove_isolates: bool (default False)
             Remove the isolated nodes in the new multiplex network.
-        
+
         """
         layers = set(layers) & set(self.layers())
 
@@ -170,11 +170,11 @@ class Multinet(nx.Graph):
 
         remove_isolates: bool (default False)
           Remove the isolated nodes in the new graph.
-        
+
         """
         if layer not in self.layers():
             raise Exception('layer does not exist.')
-        
+
         g = nx.Graph()
         g.add_nodes_from(self)
         for u,v in self.edges():
@@ -197,8 +197,8 @@ class Multinet(nx.Graph):
             g[u][v]['weight'] = sum(self[u][v]['multiplex'].values())
             g[u][v]['nlayer'] = len(self[u][v]['multiplex'])
         return g
-        
-        
+
+
     def merge_layers(self, layers, new_name=None):
         """Merge layers together with new name.
 
@@ -210,11 +210,11 @@ class Multinet(nx.Graph):
         new_name: str or None
             The name of the merged layer. If remains None, the new name will be
         the merged layers joined with underline.
-        
+
         """
         if not new_name:
             new_name = '_'.join(layers)
-            
+
         for layer in layers:
             self._remove_layer(layer)
 
@@ -240,8 +240,7 @@ class Multinet(nx.Graph):
 
         layer_name: str
             The name of the new layer.
-        
-        
+
         """
         self.add_nodes_from(layer_graph)
         self._add_layer(layer_name)
@@ -256,7 +255,7 @@ class Multinet(nx.Graph):
 
     def empty_layers(self):
         """Return a list of all empty layers.
-        
+
         """
         layers = set(self.layers())
         nonempty = set()
@@ -282,7 +281,7 @@ class Multinet(nx.Graph):
 
         """
         edges_to_remove = list()
-        
+
         for u,v in self.edges():
             if layer in self[u][v]['multiplex']:
                 self[u][v]['multiplex'].pop(layer)
@@ -299,7 +298,7 @@ class DiMultinet(nx.DiGraph):
     Directed Multiplex network class.
     TODO: Use multiple inheritance to reuse code from Multinet.
     """
-    
+
     def __init__(self):
         """Initialize a Multinet with empty layer list.
 
@@ -331,7 +330,7 @@ class DiMultinet(nx.DiGraph):
 
         """
         self.graph['layers'].remove(layer)
-        
+
 
     def layers(self):
         """Return all the layers in the DiMultinet.
@@ -345,7 +344,7 @@ class DiMultinet(nx.DiGraph):
 
         """
         return len(self.graph['layers'])
-        
+
 
     def _init_edge(self, u, v, layer):
         """Initialize one edge in the Multinet for one layer.
@@ -358,12 +357,12 @@ class DiMultinet(nx.DiGraph):
 
         layer:
             Layer the edge sit on.
-        
+
         """
         super(self.__class__,self).add_edge(u,v)
 
         self._add_layer(layer)
-            
+
         if 'multiplex' not in self[u][v]:
             self[u][v]['multiplex'] = {}
         if layer not in self[u][v]['multiplex']:
@@ -382,10 +381,10 @@ class DiMultinet(nx.DiGraph):
 
         layer:
             Layer the edge sit on.
-        
+
         weight: float (default 1.0)
             The weight of the edge.
-        
+
         """
         self._init_edge(u, v, layer)
         self[u][v]['multiplex'][layer] = weight
@@ -393,7 +392,7 @@ class DiMultinet(nx.DiGraph):
 
     def aggregate_edge(self, u, v, layer, weight):
         """Aggregate an edge to the DiMultinet.
-        
+
         If the edge already exist, add the weight to the existing one.
 
         Parameters:
@@ -403,10 +402,10 @@ class DiMultinet(nx.DiGraph):
 
         layer:
             Layer the edge sit on.
-        
+
         weight: float (default 1.0)
             The weight of the edge.
-        
+
         """
 
         self._init_edge(u, v, layer)
@@ -425,7 +424,7 @@ class DiMultinet(nx.DiGraph):
 
         remove_isolates: bool (default False)
             Remove the isolated nodes in the new multiplex network.
-        
+
         """
         layers = set(layers)&set(self.layers())
 
@@ -460,11 +459,11 @@ class DiMultinet(nx.DiGraph):
 
         remove_isolates: bool (default False)
             Remove the isolated nodes in the new graph.
-        
+
         """
         if layer not in self.layers():
             raise Exception('layer does not exist.')
-        
+
         g = nx.DiGraph()
         g.add_nodes_from(self)
         for u,v in self.edges():
@@ -487,8 +486,8 @@ class DiMultinet(nx.DiGraph):
             g[u][v]['weight'] = sum(self[u][v]['multiplex'].values())
             g[u][v]['nlayer'] = len(self[u][v]['multiplex'])
         return g
-        
-        
+
+
     def merge_layers(self, layers, new_name=None):
         """Merge layers together with new name.
 
@@ -500,11 +499,11 @@ class DiMultinet(nx.DiGraph):
         new_name: str or None
             The name of the merged layer. If remains None, the new name will be
         the merged layers joined with underline.
-        
+
         """
         if not new_name:
             new_name = '_'.join(layers)
-            
+
         for layer in layers:
             self._remove_layer(layer)
 
@@ -530,8 +529,8 @@ class DiMultinet(nx.DiGraph):
 
         layer_name: str
           The name of the new layer.
-        
-        
+
+
         """
         self.add_nodes_from(layer_graph)
         self._add_layer(layer_name)
@@ -546,7 +545,7 @@ class DiMultinet(nx.DiGraph):
 
     def empty_layers(self):
         """Return a list of all empty layers.
-        
+
         """
         layers = set(self.layers())
         nonempty = set()
@@ -572,7 +571,7 @@ class DiMultinet(nx.DiGraph):
 
         """
         edges_to_remove = list()
-        
+
         for u,v in self.edges():
             if layer in self[u][v]['multiplex']:
                 self[u][v]['multiplex'].pop(layer)

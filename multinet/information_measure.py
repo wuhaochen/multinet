@@ -24,7 +24,7 @@ def extract_count(g, layers, ignore_self_loop=True):
     nedge = g.number_of_edges()
 
     total_position = nnode * (nnode - 1)
-    
+
     if g.is_directed():
         non_edge = total_position - nedge
     else:
@@ -32,7 +32,7 @@ def extract_count(g, layers, ignore_self_loop=True):
 
     if not ignore_self_loop:
         non_edge += nnode
-        
+
     word = '0'*len(layers)
     c[word] += non_edge
 
