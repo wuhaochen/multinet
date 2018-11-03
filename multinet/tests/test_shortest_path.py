@@ -95,3 +95,14 @@ class TestShortestPath(object):
         assert mn.k_layer_reachability(dmg, 3) == 1
         assert mn.k_layer_reachability(dmg, 1) == 0.35
         assert mn.k_layer_reachability(dmg, -1) == 0.9
+
+
+    def test_harmonic_mean_shortest_path(self):
+        result = mn.harmonic_mean_shortest_path_length(mg)
+        assert result[('A', 'B')] == 1
+        assert result[('A', 'D')] == 2
+
+        result = mn.harmonic_mean_shortest_path_length(dmg)
+        assert result[('A', 'B')] == 1
+        assert result[('D', 'A')] == 2
+        assert ('A', 'D') not in result
