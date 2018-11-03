@@ -32,7 +32,7 @@ def _add_layer_nodes(bg, layers):
     """
     layer_names = map(_prefix,layers)
     bg.add_nodes_from(layer_names, bipartite=0)
-    
+
 
 def bipartize_by_node(mg, weighted=True):
     """Project a Multinet to a bipartite graph using layer-node view.
@@ -48,7 +48,7 @@ def bipartize_by_node(mg, weighted=True):
     """
     bipartite_graph = nx.Graph()
     _add_layer_nodes(bipartite_graph,mg.layers())
-    
+
     bipartite_graph.add_nodes_from(mg,bipartite = 1)
     for layer in mg.layers():
         sg = mg.sub_layer(layer,remove_isolates=True)
@@ -77,7 +77,7 @@ def bipartize_by_edge(mg, weighted=True):
     """
     bipartite_graph = nx.Graph()
     _add_layer_nodes(bipartite_graph,mg.layers())
-    
+
     bipartite_graph.add_nodes_from(mg.edges(),bipartite = 1)
     for u,v in mg.edges():
         layers = mg[u][v]['multiplex']
@@ -116,7 +116,7 @@ def bipartize(mg,mode,weighted=True):
             raise Exception("Mode does not exist!")
     else:
         raise Exception("Mode must be string!")
-        
+
 
 def bipartite_sets(bg):
     """Return two nodes sets of a bipartite graph.
@@ -163,7 +163,7 @@ def attach_importance(bg):
     """
     for node in bg.nodes():
         bg.node[node]['imp'] = 0.0
-    
+
     import itertools
     for u,v in itertools.combinations(bg.nodes(),2):
         common = set(bg[u]) & set(bg[v])

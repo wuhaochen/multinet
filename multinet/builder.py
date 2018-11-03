@@ -52,7 +52,7 @@ def multinet_from_csv(
 
     if type(layer_func) == str:
         layer_func = util.layer_from_string(layer_func)
-        
+
     with open(file_name) as netfile:
         if not csv_reader_argv:
             netreader = csv.reader(netfile,
@@ -78,10 +78,10 @@ def multinet_from_csv(
 
             origin = str(line[origin_index])
             dest = str(line[dest_index])
-            
+
             layer = layer_func(index_dict,line)
             weight = weight_func(index_dict,line)
-            
+
             mg.add_node(origin)
             mg.add_node(dest)
 

@@ -52,7 +52,7 @@ def multiplex_configuration_bipartite(mg, seed=None):
     mapping = dict(zip(keys,values))
 
     nrbg = nx.relabel_nodes(rbg,mapping)
-    
+
     if mg.is_directed():
         create_using = mn.DiMultinet()
     else:
@@ -91,7 +91,7 @@ def multiplex_configuration_independent(mg, seed=None, include_all=False):
         nmg = mn.Multinet()
 
     remove_isolates = not include_all
-    
+
     for layer in layers:
         sg = mg.sub_layer(layer, remove_isolates=remove_isolates)
         nodes = sg.nodes()

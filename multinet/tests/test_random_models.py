@@ -26,14 +26,14 @@ class TestErdosRenyi(object):
 
     def test_undirected(self):
         seed = 42
-        
+
         rmg = mn.multiplex_erdos_renyi(mg, seed=seed)
         rmg = mn.multiplex_erdos_renyi(mg)
 
 
     def test_directed(self):
         seed = 42
-        
+
         rmg = mn.multiplex_erdos_renyi(dmg, seed=seed)
         rmg = mn.multiplex_erdos_renyi(dmg)
 
