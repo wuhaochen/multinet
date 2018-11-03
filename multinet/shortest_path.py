@@ -92,17 +92,40 @@ def k_layer_diameter(mg,k):
         return 0
 
 
-def harmonic_mean_shortest_path_length(mg,source=None,target=None):
+def harmonic_mean_shortest_path_length(mg, source=None, target=None):
+    """Harmonic mean shortest path length in multiplex network.
+        The inverse of harmonic mean of shortest path length in each layer
+    between two nodes.
+        $$L(u, v) = 1 / \sum_l (1 / L_l(u, v))$$
+        $L_l(u, v)$ is the shortest path length between node $u$ and $v$ in
+    layer $l$.
+
+    Parameters:
+    -----------
+    mg: Multinet
+        Multiplex network of interest.
+
+    source: node or list
+        Node of a list of nodes as source.
+
+    target: node or list
+        Node of a list of nodes as target.
+
+    Returns:
+    --------
+        A dict keyed by (source, target) pair.
+    """
+    #TODO: implement for specified source and target.
     if not (source and target):
         from collections import Counter
         sum_harmonic = Counter()
         for layer in mg.layers():
             sg = mg.sub_layer(layer)
             shortest_paths_length = nx.all_pairs_shortest_path_length(sg)
-            for u in shortest_paths_length:
-                for v in shortest_paths_length[u]:
+            for u, spl in shortest_paths_length:
+                for v in spl:
                     if u != v:
-                        sum_harmonic[(u,v)] += 1./shortest_paths_length[u][v]
+                        sum_harmonic[(u,v)] += 1./spl[v]
         ret = {}
         for pair in sum_harmonic:
             ret[pair] = 1./sum_harmonic[pair]
