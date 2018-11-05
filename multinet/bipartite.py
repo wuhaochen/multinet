@@ -142,10 +142,8 @@ def reconstruct_from_bipartite(bg, create_using=mn.DiMultinet()):
     network.
 
     """
-    top, bottom = bipartite_sets(bg)
+    top, bottom = bipartite_sets(bg)    # pylint: disable=unused-variable
     mg = create_using
-
-    layers = map(_remove_prefix,list(top))
 
     for nodes in bottom:
         mg.add_nodes_from(nodes)
