@@ -17,19 +17,34 @@ class TestMultinet(object):
         assert mg.is_directed() == False
 
         mg.add_edge(0, 1, 'L1')
+        mg.add_edge(0, 1, 'L2')
+        mg.add_edge(1, 0, 'L2')
         mg.add_edge(1, 2, 'L2')
 
         assert 'L1' in mg.layers()
         assert 'L2' in mg.layers()
 
+        assert len(mg.edgelets) == 3
+
         assert mg.number_of_nodes() == 3
         assert mg.number_of_edges() == 2
         assert mg.number_of_layers() == 2
+        assert mg.number_of_edgelets() == 3
 
-        mg.remove_edge(0,1)
+        # Remove non-existed edge.
+        mg.remove_edgelet(2, 3, 'L3')
+
+        mg.remove_edgelet(0, 1, 'L2')
+        assert mg.number_of_nodes() == 3
+        assert mg.number_of_edges() == 2
+        assert mg.number_of_layers() == 2
+        assert mg.number_of_edgelets() == 2
+
+        mg.remove_edgelet(0, 1, 'L1')
         assert mg.number_of_nodes() == 3
         assert mg.number_of_edges() == 1
         assert mg.number_of_layers() == 2
+        assert mg.number_of_edgelets() == 1
 
         assert len(mg.empty_layers()) == 1
 
@@ -202,19 +217,34 @@ class TestDiMultinet(object):
         assert mg.is_directed() == True
 
         mg.add_edge(0, 1, 'L1')
+        mg.add_edge(0, 1, 'L2')
+        mg.add_edge(1, 0, 'L2')
         mg.add_edge(1, 2, 'L2')
 
         assert 'L1' in mg.layers()
         assert 'L2' in mg.layers()
 
+        assert len(mg.edgelets) == 4
+
+        assert mg.number_of_nodes() == 3
+        assert mg.number_of_edges() == 3
+        assert mg.number_of_layers() == 2
+        assert mg.number_of_edgelets() == 4
+
+        # Remove non-existed edge.
+        mg.remove_edgelet(2, 3, 'L3')
+
+        mg.remove_edgelet(0, 1, 'L2')
+        assert mg.number_of_nodes() == 3
+        assert mg.number_of_edges() == 3
+        assert mg.number_of_layers() == 2
+        assert mg.number_of_edgelets() == 3
+
+        mg.remove_edgelet(0, 1, 'L1')
         assert mg.number_of_nodes() == 3
         assert mg.number_of_edges() == 2
         assert mg.number_of_layers() == 2
-
-        mg.remove_edge(0,1)
-        assert mg.number_of_nodes() == 3
-        assert mg.number_of_edges() == 1
-        assert mg.number_of_layers() == 2
+        assert mg.number_of_edgelets() == 2
 
         assert len(mg.empty_layers()) == 1
 

@@ -58,6 +58,13 @@ class Multinet(nx.Graph):
         return len(self.graph['layers'])
 
 
+    def number_of_edgelets(self):
+        """Return number of layers in the Multinet.
+
+        """
+        return sum([len(self[u][v]['multiplex']) for u, v in self.edges()])
+
+
     def _init_edge(self, u, v, layer):
         """Initialize one edge in the Multinet for one layer.
         Used by add_edge() and aggregate_edge().
@@ -122,6 +129,49 @@ class Multinet(nx.Graph):
 
         self._init_edge(u, v, layer)
         self[u][v]['multiplex'][layer] += weight
+
+
+    def enum_edgelets(self):
+        """Enumerate all edges in all layers.
+
+        Yields:
+        --------
+            Enumerate all edgelets in the form of a tuple of (u, v, layer).
+        """
+        for u, v in self.edges():
+            edge = self[u][v]['multiplex']
+            for layer in edge:
+                yield (u, v, layer)
+
+
+    @property
+    def edgelets(self):
+        """Return a list of all the edgelets in the Multinet.
+
+        Returns:
+            A list of tuple (u, v, layer)
+        """
+        return list(self.enum_edgelets())
+
+
+    def remove_edgelet(self, u, v, layer):
+        """Remove a specific edge in a specific layer.
+
+        Parameters:
+        u, v: networkx node
+            The end nodes of the edgelet to be removed.
+
+        layer: str
+            The layer of the edgelet to be removed.
+        """
+        try:
+            multi_edge = self[u][v]['multiplex']
+            multi_edge.pop(layer)
+            if len(multi_edge) == 0:
+                self.nx_base.remove_edge(self, u, v)
+        except KeyError:
+            # No edge to remove. Do nothing.
+            pass
 
 
     def sub_layers(self, layers, remove_isolates=False):
