@@ -10,13 +10,19 @@ class Multinet(nx.Graph):
     Undirected Multiplex network class.
     """
 
-    def __init__(self):
+    def __init__(self, container_id='multiplex'):
         """Initialize a Multinet with empty layer list.
 
         """
         nx.Graph.__init__(self)
+        self._cid = container_id
         self.nx_base = nx.Graph
         self.graph['layers'] = []
+
+
+    @property
+    def cid(self):
+        return self._cid
 
 
     def _add_layer(self,layer):
@@ -62,7 +68,7 @@ class Multinet(nx.Graph):
         """Return number of layers in the Multinet.
 
         """
-        return sum([len(self[u][v]['multiplex']) for u, v in self.edges()])
+        return sum([len(self[u][v][self.cid]) for u, v in self.edges()])
 
 
     def _init_edge(self, u, v, layer):
@@ -82,10 +88,10 @@ class Multinet(nx.Graph):
 
         self._add_layer(layer)
 
-        if 'multiplex' not in self[u][v]:
-            self[u][v]['multiplex'] = {}
-        if layer not in self[u][v]['multiplex']:
-            self[u][v]['multiplex'][layer] = 0.0
+        if self.cid not in self[u][v]:
+            self[u][v][self.cid] = {}
+        if layer not in self[u][v][self.cid]:
+            self[u][v][self.cid][layer] = 0.0
 
 
     def add_edge(self, u, v, layer, weight=1.0):
@@ -106,7 +112,7 @@ class Multinet(nx.Graph):
 
         """
         self._init_edge(u, v, layer)
-        self[u][v]['multiplex'][layer] = weight
+        self[u][v][self.cid][layer] = weight
 
 
     def aggregate_edge(self, u, v, layer, weight):
@@ -128,7 +134,7 @@ class Multinet(nx.Graph):
         """
 
         self._init_edge(u, v, layer)
-        self[u][v]['multiplex'][layer] += weight
+        self[u][v][self.cid][layer] += weight
 
 
     def enum_edgelets(self):
@@ -139,7 +145,7 @@ class Multinet(nx.Graph):
             Enumerate all edgelets in the form of a tuple of (u, v, layer).
         """
         for u, v in self.edges():
-            edge = self[u][v]['multiplex']
+            edge = self[u][v][self.cid]
             for layer in edge:
                 yield (u, v, layer)
 
@@ -165,7 +171,7 @@ class Multinet(nx.Graph):
             The layer of the edgelet to be removed.
         """
         try:
-            multi_edge = self[u][v]['multiplex']
+            multi_edge = self[u][v][self.cid]
             multi_edge.pop(layer)
             if len(multi_edge) == 0:
                 self.nx_base.remove_edge(self, u, v)
@@ -196,12 +202,12 @@ class Multinet(nx.Graph):
         for u,v in g.edges():
             new_weight = {}
             for layer in layers:
-                if layer in g[u][v]['multiplex']:
-                    new_weight[layer] = g[u][v]['multiplex'][layer]
+                if layer in g[u][v][self.cid]:
+                    new_weight[layer] = g[u][v][self.cid][layer]
             if len(new_weight) == 0:
                 to_remove.append((u, v))
             else:
-                g[u][v]['multiplex'] = new_weight
+                g[u][v][self.cid] = new_weight
         g.remove_edges_from(to_remove)
         g.graph['layers'] = list(layers)
 
@@ -230,8 +236,8 @@ class Multinet(nx.Graph):
         g.add_nodes_from(self)
         for u,v in self.edges():
             edge = self[u][v]
-            if layer in edge['multiplex']:
-                weight = edge['multiplex'][layer]
+            if layer in edge[self.cid]:
+                weight = edge[self.cid][layer]
                 g.add_edge(u,v,weight=weight)
         if remove_isolates:
             g.remove_nodes_from(list(nx.isolates(g)))
@@ -245,8 +251,8 @@ class Multinet(nx.Graph):
         g.add_nodes_from(self)
         for u,v in self.edges():
             g.add_edge(u,v)
-            g[u][v]['weight'] = sum(self[u][v]['multiplex'].values())
-            g[u][v]['nlayer'] = len(self[u][v]['multiplex'])
+            g[u][v]['weight'] = sum(self[u][v][self.cid].values())
+            g[u][v]['nlayer'] = len(self[u][v][self.cid])
         return g
 
 
@@ -274,10 +280,10 @@ class Multinet(nx.Graph):
         for u,v in self.edges():
             new_weight = 0.0
             for layer in layers:
-                if layer in self[u][v]['multiplex']:
-                    new_weight += self[u][v]['multiplex'].pop(layer)
+                if layer in self[u][v][self.cid]:
+                    new_weight += self[u][v][self.cid].pop(layer)
             if new_weight != 0:
-                self[u][v]['multiplex'][new_name] = new_weight
+                self[u][v][self.cid][new_name] = new_weight
 
 
     def add_layer(self, layer_graph, layer_name):
@@ -312,7 +318,7 @@ class Multinet(nx.Graph):
         nonempty = set()
 
         for u,v in self.edges():
-            for layer in self[u][v]['multiplex']:
+            for layer in self[u][v][self.cid]:
                 nonempty.add(layer)
 
         return list(layers-nonempty)
@@ -334,9 +340,9 @@ class Multinet(nx.Graph):
         edges_to_remove = list()
 
         for u,v in self.edges():
-            if layer in self[u][v]['multiplex']:
-                self[u][v]['multiplex'].pop(layer)
-            if len(self[u][v]['multiplex']) == 0:
+            if layer in self[u][v][self.cid]:
+                self[u][v][self.cid].pop(layer)
+            if len(self[u][v][self.cid]) == 0:
                 edges_to_remove.append((u, v))
 
         self.remove_edges_from(edges_to_remove)
@@ -349,10 +355,11 @@ class DiMultinet(Multinet, nx.DiGraph):
     Directed Multiplex network class.
     """
 
-    def __init__(self):
+    def __init__(self, container_id='multiplex'):
         """Initialize a Multinet with empty layer list.
         """
         nx.DiGraph.__init__(self)
+        self._cid = container_id
         self.nx_base = nx.DiGraph
         self.graph['layers'] = []
 
@@ -364,6 +371,6 @@ class DiMultinet(Multinet, nx.DiGraph):
         g.add_nodes_from(self.nodes())
         g.graph['layers'] = self.layers()
         for u,v in self.edges():
-            for layer in self[u][v]['multiplex']:
-                g.aggregate_edge(u,v,layer,self[u][v]['multiplex'][layer])
+            for layer in self[u][v][self.cid]:
+                g.aggregate_edge(u,v,layer,self[u][v][self.cid][layer])
         return g

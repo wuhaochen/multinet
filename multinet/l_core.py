@@ -11,7 +11,7 @@ def l_core(mg, l):
     core = copy.deepcopy(mg)
 
     for u,v in mg.edges():
-        if len(mg[u][v]['multiplex']) < l:
+        if len(mg[u][v][mg.cid]) < l:
             core.remove_edge(u,v)
 
     core.remove_nodes_from(nx.isolates(core))

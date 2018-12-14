@@ -14,7 +14,7 @@ def extract_count(g, layers, ignore_self_loop=True):
             continue
         word = ''
         for layer in layers:
-            if layer in g[u][v]['multiplex']:
+            if layer in g[u][v][g.cid]:
                 word += '1'
             else:
                 word += '0'
