@@ -59,17 +59,17 @@ class TestMultinet(object):
         mg.add_edge(0, 1, 'L1', weight=5)
         mg.add_edge(1, 2, 'L2', weight=6)
 
-        assert mg[0][1]['multiplex']['L1'] == 5
-        assert mg[1][2]['multiplex']['L2'] == 6
+        assert mg[0][1][mg.cid]['L1'] == 5
+        assert mg[1][2][mg.cid]['L2'] == 6
 
         mg.add_edge(0, 1, 'L1', weight=10)
-        assert mg[0][1]['multiplex']['L1'] == 10
+        assert mg[0][1][mg.cid]['L1'] == 10
 
         mg.aggregate_edge(0, 1, 'L1', weight=5)
-        assert mg[0][1]['multiplex']['L1'] == 15
+        assert mg[0][1][mg.cid]['L1'] == 15
 
         mg.aggregate_edge(2, 3, 'L2', weight=7)
-        assert mg[2][3]['multiplex']['L2'] == 7
+        assert mg[2][3][mg.cid]['L2'] == 7
 
 
     def test_sub_layer(self):
@@ -140,8 +140,8 @@ class TestMultinet(object):
         assert mg.number_of_nodes() == 3
         assert mg.number_of_edges() == 2
 
-        assert mg[0][1]['multiplex']['L1_L2'] == 5
-        assert mg[1][2]['multiplex']['L1_L2'] == 6
+        assert mg[0][1][mg.cid]['L1_L2'] == 5
+        assert mg[1][2][mg.cid]['L1_L2'] == 6
 
         mg = mn.Multinet()
 
@@ -157,8 +157,8 @@ class TestMultinet(object):
         assert mg.number_of_nodes() == 3
         assert mg.number_of_edges() == 2
 
-        assert mg[0][1]['multiplex']['L1'] == 5
-        assert mg[1][2]['multiplex']['LN'] == 8
+        assert mg[0][1][mg.cid]['L1'] == 5
+        assert mg[1][2][mg.cid]['LN'] == 8
 
 
     def test_add_layer(self):
@@ -176,9 +176,9 @@ class TestMultinet(object):
         assert mg.number_of_edges() == 3
         assert mg.number_of_layers() == 3
 
-        assert mg[1][2]['multiplex']['L2'] == 6
-        assert mg[1][2]['multiplex']['L3'] == 7
-        assert mg[2][3]['multiplex']['L3'] == 1
+        assert mg[1][2][mg.cid]['L2'] == 6
+        assert mg[1][2][mg.cid]['L3'] == 7
+        assert mg[2][3][mg.cid]['L3'] == 1
 
 
     def test_remove_layer(self):
@@ -259,17 +259,17 @@ class TestDiMultinet(object):
         mg.add_edge(0, 1, 'L1', weight=5)
         mg.add_edge(1, 2, 'L2', weight=6)
 
-        assert mg[0][1]['multiplex']['L1'] == 5
-        assert mg[1][2]['multiplex']['L2'] == 6
+        assert mg[0][1][mg.cid]['L1'] == 5
+        assert mg[1][2][mg.cid]['L2'] == 6
 
         mg.add_edge(0, 1, 'L1', weight=10)
-        assert mg[0][1]['multiplex']['L1'] == 10
+        assert mg[0][1][mg.cid]['L1'] == 10
 
         mg.aggregate_edge(0, 1, 'L1', weight=5)
-        assert mg[0][1]['multiplex']['L1'] == 15
+        assert mg[0][1][mg.cid]['L1'] == 15
 
         mg.aggregate_edge(2, 3, 'L2', weight=7)
-        assert mg[2][3]['multiplex']['L2'] == 7
+        assert mg[2][3][mg.cid]['L2'] == 7
 
 
     def test_sub_layer(self):
@@ -340,8 +340,8 @@ class TestDiMultinet(object):
         assert mg.number_of_nodes() == 3
         assert mg.number_of_edges() == 2
 
-        assert mg[0][1]['multiplex']['L1_L2'] == 5
-        assert mg[1][2]['multiplex']['L1_L2'] == 6
+        assert mg[0][1][mg.cid]['L1_L2'] == 5
+        assert mg[1][2][mg.cid]['L1_L2'] == 6
 
         mg = mn.DiMultinet()
 
@@ -357,8 +357,8 @@ class TestDiMultinet(object):
         assert mg.number_of_nodes() == 3
         assert mg.number_of_edges() == 2
 
-        assert mg[0][1]['multiplex']['L1'] == 5
-        assert mg[1][2]['multiplex']['LN'] == 8
+        assert mg[0][1][mg.cid]['L1'] == 5
+        assert mg[1][2][mg.cid]['LN'] == 8
 
 
     def test_add_layer(self):
@@ -376,9 +376,9 @@ class TestDiMultinet(object):
         assert mg.number_of_edges() == 3
         assert mg.number_of_layers() == 3
 
-        assert mg[1][2]['multiplex']['L2'] == 6
-        assert mg[1][2]['multiplex']['L3'] == 7
-        assert mg[2][3]['multiplex']['L3'] == 1
+        assert mg[1][2][mg.cid]['L2'] == 6
+        assert mg[1][2][mg.cid]['L3'] == 7
+        assert mg[2][3][mg.cid]['L3'] == 1
 
 
     def test_remove_layer(self):
